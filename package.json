@@ -1,0 +1,29 @@
+{
+	"name": "ncs-local-form-autofiller",
+	"version": "1.0.0",
+	"private": true,
+	"description": "Local-only form auto-filler app with root-level Codex MCP protocols.",
+	"scripts": {
+		"test": "node --test",
+		"test:print": "node tests/print-smoke.mjs",
+		"benchmark": "node tests/performance-benchmark.cjs",
+		"check": "node --check .mcp/bridge.mjs && node --check .mcp/probe.mjs && node --check .mcp/audit.mjs && node --check .mcp/doctor.mjs && node --check .mcp/sync-server.mjs",
+		"bridge": "node .mcp/bridge.mjs",
+		"probe": "node .mcp/probe.mjs",
+		"audit": "node .mcp/audit.mjs",
+		"doctor": "node .mcp/doctor.mjs",
+		"sync-server": "node .mcp/sync-server.mjs",
+		"bootstrap": "powershell -ExecutionPolicy Bypass -File .\\bootstrap.ps1",
+		"lint": "biome lint .",
+		"format": "biome format --write .",
+		"ci": "biome check ."
+	},
+	"dependencies": {
+		"@modelcontextprotocol/sdk": "1.29.0",
+		"playwright-core": "^1.59.1",
+		"zod": "^3.23.8"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "^1.9.4"
+	}
+}
