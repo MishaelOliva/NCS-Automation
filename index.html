@@ -1,0 +1,1072 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#071c3b">
+    <title>NCS Form Auto-Filler</title>
+    <link rel="stylesheet" href="assets/vendor/inter/inter.css?v=20260728opt1">
+    <link rel="stylesheet" href="assets/vendor/fontawesome/css/ncs-icons.css?v=20260728opt1">
+    <link rel="stylesheet" href="assets/css/base.css?v=20260728opt1">
+    <link rel="stylesheet" href="assets/css/components.css?v=20260729autofillwarning1">
+    <link rel="stylesheet" href="assets/css/forms.css?v=20260728opt1">
+    <link rel="stylesheet" href="assets/css/print.css?v=20260729accountabilitysignatures3" media="print">
+    <link rel="stylesheet" href="assets/css/experience.css?v=20260728opt1">
+
+</head>
+
+<body>
+    <div class="app-container">
+        <!-- Sidebar config panel -->
+        <aside class="config-panel hide-print" aria-label="Workspace controls">
+            <div class="panel-brand">
+                <div class="panel-brand-mark" aria-hidden="true">
+                    <img src="assets/img/ncs-logo-optimized.png" alt="" width="720" height="259">
+                </div>
+                <div class="panel-brand-copy">
+                    <span class="panel-brand-eyebrow">Asset operations</span>
+                    <div class="panel-credit">Form Workspace</div>
+                    <p>Local, secure document preparation</p>
+                </div>
+            </div>
+            <div class="panel-header">
+                <div class="panel-header-actions">
+                    <a href="settings.html" class="settings-nav-btn">
+                        <i class="fa-solid fa-gear"></i>
+                        <span>Settings</span>
+                    </a>
+                    <button id="tutorialBtn" class="settings-nav-btn tutorial-launch-btn" type="button">
+                        <i class="fa-solid fa-wand-magic-sparkles"></i>
+                        <span>Tutorial</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="gsheet-manager">
+                <div class="sidebar-section-heading-row">
+                    <label for="csvFileInput" class="sidebar-section-title">
+                        <span class="sidebar-section-icon" aria-hidden="true"><i class="fa-solid fa-database"></i></span>
+                        <span>
+                            <strong>Data sources</strong>
+                            <small>CSV workspace</small>
+                        </span>
+                    </label>
+                    <button id="copySheetRowBtn" class="sheet-copy-btn hide" type="button"
+                        aria-label="Copy Return and Sanitation rows for Google Sheets"
+                        title="Copy Return and Sanitation rows for Google Sheets (Ctrl+C or Ctrl+Shift+C)">
+                        <i class="fa-solid fa-copy" aria-hidden="true"></i>
+                        <span>Copy row</span>
+                    </button>
+                </div>
+                <div class="input-group">
+                    <input type="file" id="csvFileInput" accept=".csv" class="file-input" multiple>
+                </div>
+                <div class="help-text">Download from Google Sheets as .csv and upload here. You can select multiple files at once.</div>
+                <div class="help-text">Sources stay on this browser until you remove them.</div>
+
+                <div class="print-settings-card mt-4">
+                    <div class="print-settings-header">
+                        <h3>Print Filename</h3>
+                        <div class="help-text no-margin">Used by Save as PDF.</div>
+                    </div>
+                    <div id="accountabilityPrintModePanel" class="print-mode-panel">
+                        <div class="print-mode-label">Accountability Type</div>
+                        <div class="print-mode-buttons">
+                            <button type="button" class="print-mode-btn active" data-accountability-mode="new_hire">New
+                                Hire</button>
+                            <button type="button" class="print-mode-btn"
+                                data-accountability-mode="replacement">Replacement</button>
+                            <button type="button" class="print-mode-btn"
+                                data-accountability-mode="refresh">Refresh</button>
+                            <button type="button" class="print-mode-btn"
+                                data-accountability-mode="temporary">Temporary</button>
+                        </div>
+                    </div>
+                    <div id="returnPrintModePanel" class="print-mode-panel hide">
+                        <div class="print-mode-label">Return / Sanitation Type</div>
+                        <div class="print-mode-buttons">
+                            <button type="button" class="print-mode-btn"
+                                data-return-mode="returned_only">Returned Only</button>
+                            <button type="button" class="print-mode-btn active"
+                                data-return-mode="resigned">Resigned</button>
+                            <button type="button" class="print-mode-btn" data-return-mode="purchased">Purchased</button>
+                            <button type="button" class="print-mode-btn" data-return-mode="refresh">Refresh</button>
+                            <button type="button" class="print-mode-btn"
+                                data-return-mode="replacement">Replacement</button>
+                            <button type="button" class="print-mode-btn" data-return-mode="for_repair">For
+                                Repair</button>
+                        </div>
+                    </div>
+                <div id="printFilePreview" class="print-file-preview">NCS Form Auto-Filler.pdf</div>
+                </div>
+
+                <section id="sourceStatusPanel" class="source-status-panel mt-4" aria-label="Current app status">
+                    <div class="source-status-header">
+                        <h3>Current Status</h3>
+                        <span class="source-status-chip">Local only</span>
+                    </div>
+                    <dl class="source-status-grid">
+                        <div class="source-status-item">
+                            <dt>Active Form</dt>
+                            <dd id="statusActiveForm">Asset Accountability Form</dd>
+                        </div>
+                        <div class="source-status-item">
+                            <dt>Active Mode</dt>
+                            <dd id="statusActiveMode">New Hire</dd>
+                        </div>
+                        <div class="source-status-item">
+                            <dt>Loaded Sources</dt>
+                            <dd id="statusLoadedSources">0</dd>
+                        </div>
+                        <div class="source-status-item">
+                            <dt>Autofill Readiness</dt>
+                            <dd id="statusAutofillReadiness">Missing source</dd>
+                        </div>
+                    </dl>
+                </section>
+
+                <div class="sources-header-row mt-4">
+                    <h3>Active Sources</h3>
+                    <button id="clearSourcesBtn" class="btn btn-outline btn-small" type="button">Clear All</button>
+                </div>
+                <ul id="gsheetList" class="gsheet-list">
+                    <!-- GSheet items injected via JS -->
+                </ul>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <!-- Form Selector UI -->
+            <div id="formSelector" class="form-selector-grid hide-print">
+                <button class="form-btn active" data-form="accountability" aria-pressed="true" type="button">
+                    <span class="form-btn-icon" aria-hidden="true"><i class="fa-solid fa-laptop-file"></i></span>
+                    <span class="form-btn-copy"><strong>Accountability</strong><small>Issue, replace, or refresh</small></span>
+                </button>
+                <button class="form-btn" data-form="test_device_accountability" aria-pressed="false" type="button">
+                    <span class="form-btn-icon" aria-hidden="true"><i class="fa-solid fa-mobile-screen-button"></i></span>
+                    <span class="form-btn-copy"><strong>Test devices</strong><small>Assign and acknowledge</small></span>
+                </button>
+                <!-- Removed Return Form dropdown to avoid redundancy -->
+                <div class="dropdown-wrapper">
+                    <button class="form-btn" id="sanitizationDropdownBtn" aria-pressed="false" type="button">
+                        <span class="form-btn-icon" aria-hidden="true"><i class="fa-solid fa-shield-halved"></i></span>
+                        <span class="form-btn-copy"><strong>Return &amp; sanitation</strong><small>Clear, return, or repair</small></span>
+                        <i class="fa-solid fa-angle-down form-btn-chevron" aria-hidden="true"></i>
+                    </button>
+                    <div class="dropdown-content">
+                        <button class="sub-btn" data-form="sanitization_laptop" type="button">Laptops / Monitors</button>
+                        <button class="sub-btn" data-form="sanitization_test" type="button">Test Devices</button>
+                    </div>
+                </div>
+            </div>
+
+            <header id="appHeader" class="app-header hide-print">
+                <div id="appLogo" class="logo">
+                    <h1>
+                        <button id="tutorialGlowResetBtn" class="logo-secret-btn" type="button" aria-label="Reset tutorial glow">
+                            <i class="fa-solid fa-bolt"></i>
+                        </button>
+                        <span class="logo-copy">
+                            <span class="logo-eyebrow">Asset operations workspace</span>
+                            <span class="logo-title">NCS Form Auto-Filler</span>
+                        </span>
+                    </h1>
+                    <div class="logo-status"><span aria-hidden="true"></span>Processing stays on this device</div>
+                </div>
+
+                <div class="search-section">
+                    <div id="defaultSearchSection" class="search-box">
+                        <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                        <input type="text" id="searchInput"
+                            placeholder="Enter EE ID, Serial No, Asset Tag, or Full Name">
+                        <button id="searchBtn" class="btn btn-accent" type="button">Autofill</button>
+                    </div>
+                    <div class="search-helper-text"><i class="fa-solid fa-circle-info" aria-hidden="true"></i> Search by EE ID, serial number, asset tag, or full employee name.</div>
+                    <div id="accountabilityReplacementSearchPanel" class="test-device-search-panel hide">
+                        <div class="test-device-search-group">
+                            <div class="search-group-label">Employee Lookup</div>
+                            <div class="search-box">
+                                <i class="fa-solid fa-id-card search-icon"></i>
+                                <input type="text" id="accEmployeeSearchInput" placeholder="Enter EE ID or Full Name">
+                            </div>
+                            <div class="search-helper-text">Use employee lookup to fill the employee details.</div>
+                        </div>
+                        <div class="test-device-search-group">
+                            <div class="search-group-label">Asset / Serial</div>
+                            <div class="search-box">
+                                <i class="fa-solid fa-laptop search-icon"></i>
+                                <input type="text" id="accAssetSearchInput"
+                                    placeholder="Enter asset tag or serial to fill the asset details">
+                            </div>
+                            <div class="search-helper-text">Use asset tag or serial to fill the asset row independently.</div>
+                        </div>
+                        <div class="test-device-search-actions">
+                            <button id="accReplacementAutofillBtn" class="btn btn-accent" type="button">Autofill Accountability</button>
+                        </div>
+                    </div>
+                    <div id="testDeviceAccountabilitySearchPanel" class="test-device-search-panel hide">
+                        <div class="test-device-search-group">
+                            <div class="test-device-search-group-header">
+                                <div class="search-group-label">Test Device Lookup</div>
+                                <button id="tdaAddBtn" class="btn btn-outline btn-small tda-add-btn" type="button">Add</button>
+                            </div>
+                            <div id="tdaAssetSearchRows" class="tda-asset-search-rows">
+                                <div class="search-box tda-asset-search-row">
+                                    <i class="fa-solid fa-mobile-screen-button search-icon"></i>
+                                    <input type="text" id="tdaAssetSearchInput" class="test-device-asset-search-input"
+                                        placeholder="Enter TD Asset Tag, Serial No, or IMEI">
+                                </div>
+                            </div>
+                            <div class="search-helper-text">Search by test device asset tag, serial number, or IMEI.</div>
+                        </div>
+                        <div class="test-device-search-group">
+                            <div class="search-group-label">Assignee Lookup</div>
+                            <div class="search-box">
+                                <i class="fa-solid fa-user search-icon"></i>
+                                <input type="text" id="tdaEmployeeSearchInput" placeholder="Enter EE ID or Full Name">
+                            </div>
+                            <div class="search-helper-text">Search by EE ID or full employee name.</div>
+                        </div>
+                        <div class="test-device-search-actions">
+                            <button id="tdaAutofillBtn" class="btn btn-accent" type="button">Autofill Test Device</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="header-actions">
+                    <button id="printBtn" class="btn btn-outline" type="button"><i class="fa-solid fa-print"></i> Print Form</button>
+                </div>
+            </header>
+
+            <div class="form-wrapper">
+                <div id="loadingIndicator" class="loading hide hide-print">
+                    <div class="spinner"></div>
+                    <p>Searching through data sources...</p>
+                </div>
+
+                <div id="errorMessage" class="alert alert-danger hide hide-print" role="alert" aria-live="assertive">
+                    <span id="errorMessageText" class="alert-text"></span>
+                    <button id="dismissErrorBtn" class="alert-dismiss" type="button" aria-label="Dismiss error message">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+                <div id="successMessage" class="alert alert-success hide hide-print" role="status" aria-live="polite">
+                    <span id="successMessageText" class="alert-text"></span>
+                    <button id="dismissSuccessBtn" class="alert-dismiss" type="button" aria-label="Dismiss success message">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+                <div id="warningMessage" class="alert alert-warning hide hide-print" role="alert" aria-live="polite">
+                    <i class="fa-solid fa-triangle-exclamation alert-icon" aria-hidden="true"></i>
+                    <span id="warningMessageText" class="alert-text"></span>
+                    <button id="dismissWarningBtn" class="alert-dismiss" type="button" aria-label="Dismiss warning message">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+
+                <!-- Template 1: Asset Accountability Form -->
+                <div id="template-accountability" class="form-template active">
+                    <div id="accountabilityForm" class="printable-form">
+                        <div class="form-top-row">
+                            <img src="assets/img/ncs-logo-optimized.png" alt="NCS Logo" class="yondu-logo-img ncs-logo-img" width="720" height="259">
+                            <div class="control-number-container ncs-control-number">
+                                <div class="cn-label-box">Control Number</div>
+                                <div class="cn-value-box" id="f_refNo"></div>
+                            </div>
+                        </div>
+
+                        <div class="form-title-bar ncs-form-title">
+                            ASSET ACCOUNTABILITY FORM
+                        </div>
+
+                        <table class="info-table ncs-info-table">
+                            <tbody>
+                            <tr>
+                                <td class="label">Employee Name</td>
+                                <td class="value">
+                                    <input type="text" id="f_empName" class="editable-input center-text">
+                                </td>
+                                <td class="label">Position</td>
+                                <td class="value">
+                                    <input type="text" id="f_position" class="editable-input center-text">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="label">Employee Number</td>
+                                <td class="value">
+                                    <input type="text" id="f_empId" class="editable-input center-text">
+                                </td>
+                                <td class="label">Cost Center</td>
+                                <td class="value"><input type="text" id="f_costCenter" class="editable-input"></td>
+                            </tr>
+                            </tbody>
+                        </table>
+
+                        <table class="details-table ncs-details-table mt-4">
+                            <thead>
+                                <tr>
+                                    <th scope="col">QTY</th>
+                                    <th scope="col">PARTICULARS</th>
+                                    <th scope="col">ASSET TAG</th>
+                                    <th scope="col">MODEL / DESCRIPTION</th>
+                                    <th scope="col">SERIAL / IMEI</th>
+                                    <th scope="col">SETUP DATE</th>
+                                    <th scope="col">REMARKS</th>
+                                </tr>
+                            </thead>
+                            <tbody id="accountabilityDetailsBody">
+                                <tr id="accountabilityPrimaryRow">
+                                    <td class="center-text bordered-bottom">1</td>
+                                    <td class="center-text bordered-bottom" id="f_eqType">Laptop</td>
+                                    <td class="center-text bordered-bottom" id="f_assetTag"></td>
+                                    <td class="bordered-bottom center-text" id="f_model"></td>
+                                    <td class="center-text bordered-bottom" id="f_serialNum"></td>
+                                    <td class="bordered-bottom center-text">
+                                        <div class="custom-date-wrapper">
+                                            <textarea id="f_setupDate_text"
+                                                class="editable-textarea auto-resize center-text custom-date-text"
+                                                rows="1"></textarea>
+                                            <input type="date" id="f_setupDate"
+                                                class="editable-input center-text custom-date-native">
+                                        </div>
+                                    </td>
+                                    <td class="bordered-bottom center-text">
+                                        <div class="combobox-wrapper">
+                                            <textarea id="f_remarks" class="editable-textarea auto-resize center-text"
+                                                rows="1"></textarea>
+                                            <button type="button" class="combobox-toggle"
+                                                data-target="f_remarks">&#9660;</button>
+                                            <div class="combobox-options" id="f_remarks_options"></div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr class="empty-row" id="accountabilityEmptyRow">
+                                    <td class="bordered-bottom"></td>
+                                    <td class="bordered-bottom"></td>
+                                    <td class="bordered-bottom"></td>
+                                    <td class="bordered-bottom"></td>
+                                    <td class="bordered-bottom"></td>
+                                    <td class="bordered-bottom"></td>
+                                    <td class="bordered-bottom"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <div class="authority-section ncs-authority-section">
+                            <div class="auth-header">AUTHORITY TO DEDUCT</div>
+                            <p class="auth-text">
+                                By signing on this document, the employee affirms that <strong>he/she received the unit in
+                                    good condition and will be held accountable for any loss or damage to the
+                                    equipment</strong> assigned to him/her, the employee shall shoulder the full
+                                replacement cost or full repair cost, whichever is applicable.
+                            </p>
+
+                            <div class="signatures-grid ncs-signatures-grid ncs-accountability-signatures">
+                                <div class="sig-column ncs-signature-column ncs-assignee-signature-column">
+                                    <div class="ncs-signature-panel">
+                                        <div class="sig-title-bar">ASSIGNEE</div>
+                                        <div class="ncs-signature-blank"></div>
+                                        <div class="ncs-signature-name-row">
+                                            <textarea class="editable-input editable-textarea auto-resize sig-name-input ncs-signature-input ncs-signature-textarea" id="f_sigEmpName" rows="2" placeholder="SURNAME, FULL NAME"></textarea>
+                                        </div>
+                                        <div class="ncs-signature-role-row">
+                                            <textarea class="editable-input editable-textarea auto-resize sig-pos-input ncs-signature-input ncs-signature-textarea" id="f_sigPosition" rows="2" placeholder="Full Name and Signature"></textarea>
+                                        </div>
+                                        <div class="ncs-signature-date-row">
+                                            <div class="ncs-signature-date-label">Date Signed</div>
+                                            <div class="ncs-signature-date-cell"></div>
+                                        </div>
+                                    </div>
+                                    <div class="ncs-pickup-row ncs-pickup-row-standalone">
+                                        <div class="sig-title-bar ncs-inline-title">PICK UP DATE:</div>
+                                        <div class="ncs-pickup-input">
+                                            <div class="custom-date-wrapper">
+                                                <input type="text"
+                                                    class="editable-input inline-date-input custom-date-text ncs-signature-input"
+                                                    id="f_dateIssued_text">
+                                                <input type="date"
+                                                    class="editable-input inline-date-input custom-date-native"
+                                                    id="f_dateIssued">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="sig-column ncs-signature-panel">
+                                    <div class="sig-title-bar">ISSUED BY</div>
+                                    <div class="ncs-signature-blank"></div>
+                                    <div class="ncs-signature-name-row">
+                                        <textarea class="editable-input editable-textarea auto-resize sig-name-input ncs-signature-input ncs-signature-textarea" id="f_issuedName" data-signer-roster="issued" rows="2">PADUA, RUZZEL MICKO GARCIA</textarea>
+                                    </div>
+                                    <div class="ncs-signature-role-row">
+                                        <textarea class="editable-input editable-textarea auto-resize sig-pos-input ncs-signature-input ncs-signature-textarea" id="f_issuedPos" rows="2"></textarea>
+                                    </div>
+                                    <div class="ncs-signature-date-row">
+                                        <div class="ncs-signature-date-label">Date Signed</div>
+                                        <div class="ncs-signature-date-cell">
+                                            <div class="custom-date-wrapper">
+                                                <input type="text"
+                                                    class="editable-input inline-date-input custom-date-text ncs-signature-input"
+                                                    id="f_issuedDate_text">
+                                                <input type="date"
+                                                    class="editable-input inline-date-input custom-date-native"
+                                                    id="f_issuedDate">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="sig-column ncs-signature-panel right">
+                                    <div class="sig-title-bar">APPROVED BY</div>
+                                    <div class="ncs-signature-blank"></div>
+                                    <div class="sig-details ncs-approved-details" id="accountabilityApprovedByDetails">
+                                        <div class="ncs-signature-name-row">
+                                            <textarea class="editable-input editable-textarea auto-resize approved-signature-name sig-name-input ncs-signature-input ncs-signature-textarea" id="f_approvedName" data-signer-roster="approved" rows="2">MENDEZ, PAUL ALDRIN</textarea>
+                                        </div>
+                                        <div class="ncs-signature-role-row">
+                                            <textarea class="editable-input editable-textarea auto-resize approved-signature-role sig-pos-input ncs-signature-input ncs-signature-textarea" id="f_approvedPos" rows="2">ITSM Lead and Asset Management Lead</textarea>
+                                        </div>
+                                        <div class="ncs-signature-date-row">
+                                            <div class="ncs-signature-date-label">Date Signed</div>
+                                            <div class="ncs-signature-date-cell"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="accountabilityPrintOverflow" class="accountability-print-overflow print-only"></div>
+                </div>
+                <!-- End Template 1 -->
+
+                <!-- Template 1B: Test Device Accountability Form -->
+                <div id="template-test-device-accountability" class="form-template">
+                    <div id="testDeviceAccountabilityForm" class="printable-form test-device-accountability-form">
+                        <div class="form-top-row tda-form-top-row">
+                            <img src="assets/img/ncs-logo-optimized.png" alt="NCS Logo" class="yondu-logo-img ncs-logo-img" width="720" height="259">
+                        </div>
+
+                        <div class="form-title-bar ncs-form-title mt-spacing">
+                            TEST DEVICE ASSET ACCOUNTABILITY FORM
+                        </div>
+
+                        <table class="info-table tda-info-table ncs-info-table">
+                            <tbody>
+                            <tr>
+                                <td class="label">Employee Name</td>
+                                <td class="value">
+                                    <input type="text" id="f_tdaEmpName" class="editable-input center-text">
+                                </td>
+                                <td class="label">Business Unit</td>
+                                <td class="value">
+                                    <input type="text" id="f_tdaBusinessUnit" class="editable-input center-text">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="label">Employee Number</td>
+                                <td class="value">
+                                    <input type="text" id="f_tdaEmpId" class="editable-input center-text">
+                                </td>
+                                <td class="label">Employment Status</td>
+                                <td class="value"><input type="text" id="f_tdaEmploymentStatus" class="editable-input center-text"></td>
+                            </tr>
+                            <tr>
+                                <td class="label">Position</td>
+                                <td class="value">
+                                    <input type="text" id="f_tdaPosition" class="editable-input center-text">
+                                </td>
+                                <td class="label">Immediate Supervisor</td>
+                                <td class="value"><input type="text" id="f_tdaSupervisor" class="editable-input center-text"></td>
+                            </tr>
+                            </tbody>
+                        </table>
+
+                        <div id="f_tdaAssetTagList" class="ncs-hidden-meta"></div>
+
+                        <table class="details-table tda-details-table ncs-details-table mt-4">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Qty</th>
+                                    <th scope="col">Particulars</th>
+                                    <th scope="col">Asset Tag</th>
+                                    <th scope="col">Model / Description</th>
+                                    <th scope="col">Serial Number</th>
+                                    <th scope="col">IMEI</th>
+                                    <th scope="col">Date Issued</th>
+                                </tr>
+                            </thead>
+                            <tbody id="f_tdaDetailsBody">
+                                <tr id="f_tdaPrimaryDeviceRow" class="tda-device-row tda-device-primary-row">
+                                    <td class="center-text bordered-bottom">1</td>
+                                    <td class="center-text bordered-bottom">TEST DEVICE</td>
+                                    <td class="center-text bordered-bottom">
+                                        <input type="text" id="f_tdaAssetTag" class="editable-input center-text">
+                                    </td>
+                                    <td class="center-text bordered-bottom">
+                                        <textarea id="f_tdaModel"
+                                            class="editable-input auto-resize center-text ncs-description-field" rows="1"></textarea>
+                                    </td>
+                                    <td class="center-text bordered-bottom">
+                                        <input type="text" id="f_tdaSerial" class="editable-input center-text">
+                                    </td>
+                                    <td class="center-text bordered-bottom">
+                                        <input type="text" id="f_tdaImei" class="editable-input center-text">
+                                    </td>
+                                    <td class="bordered-bottom center-text">
+                                        <div class="custom-date-wrapper">
+                                            <input type="text" id="f_tdaDate_text"
+                                                class="editable-input center-text custom-date-text inline-date-input">
+                                            <input type="date" id="f_tdaDate"
+                                                class="editable-input center-text custom-date-native inline-date-input">
+                                        </div>
+                                        <div class="ncs-hidden-meta">
+                                            <input type="text" id="f_tdaEmployeeSignature" class="editable-input center-text">
+                                            <div class="combobox-wrapper">
+                                                <textarea id="f_tdaProjectRemarks"
+                                                    class="editable-textarea auto-resize center-text tda-project-remarks"
+                                                    rows="2"></textarea>
+                                                <button type="button" class="combobox-toggle"
+                                                    data-target="f_tdaProjectRemarks">&#9660;</button>
+                                                <div class="combobox-options tda-project-remarks-options"
+                                                    id="f_tdaProjectRemarks_options">
+                                                    <div class="combobox-option" data-value="IQS - Box Only">IQS - Box Only</div>
+                                                    <div class="combobox-option" data-value="IQS - Box with Charger">IQS - Box with Charger</div>
+                                                    <div class="combobox-option" data-value="IQS - Charger Only">IQS - Charger Only</div>
+                                                    <div class="combobox-option" data-value="IQS - No Box">IQS - No Box</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr id="f_tdaDeviceEmptyRow" class="empty-row tda-device-empty-row">
+                                    <td class="bordered-bottom"></td>
+                                    <td class="bordered-bottom"></td>
+                                    <td class="bordered-bottom"></td>
+                                    <td class="bordered-bottom"></td>
+                                    <td class="bordered-bottom"></td>
+                                    <td class="bordered-bottom"></td>
+                                    <td class="bordered-bottom"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                            <div class="authority-section ncs-authority-section">
+                                <div class="auth-header">AUTHORITY TO DEDUCT</div>
+                                <p class="auth-text">
+                                    By signing on this document, the employee affirms that <strong>he/she received the unit in
+                                    good condition and will be held accountable for any loss or damage to the equipment</strong>
+                                    assigned to him/her, the employee shall shoulder the full replacement cost or full repair
+                                    cost, whichever is applicable.
+                                </p>
+
+                                <div class="tda-signatures-grid ncs-signatures-grid ncs-accountability-signatures">
+                                    <div class="tda-signature-column sig-column ncs-signature-panel">
+                                        <div class="sig-title-bar">ASSIGNEE</div>
+                                        <div class="ncs-signature-blank"></div>
+                                        <div class="ncs-signature-name-row">
+                                            <textarea id="f_tdaEmployeePrintName"
+                                                class="editable-input editable-textarea auto-resize sig-name-input center-text ncs-signature-input ncs-signature-textarea"
+                                                rows="2" placeholder="SURNAME, FULL NAME"></textarea>
+                                        </div>
+                                        <div class="ncs-signature-role-row">
+                                            <textarea id="f_tdaCostCenter"
+                                                class="editable-input editable-textarea auto-resize sig-pos-input center-text ncs-signature-input ncs-signature-textarea tda-assignee-position"
+                                                rows="2" placeholder="Position"></textarea>
+                                        </div>
+                                        <div class="ncs-signature-date-row">
+                                            <div class="ncs-signature-date-label">Date Signed</div>
+                                            <div class="ncs-signature-date-cell"></div>
+                                        </div>
+                                    </div>
+
+                                    <div class="tda-signature-column sig-column ncs-signature-panel">
+                                        <div class="sig-title-bar">ISSUED BY</div>
+                                        <div class="ncs-signature-blank"></div>
+                                        <div class="ncs-signature-name-row">
+                                            <textarea id="f_tdaPreparedName"
+                                                class="editable-input editable-textarea auto-resize sig-name-input ncs-signature-input ncs-signature-textarea"
+                                                data-signer-roster="issued" rows="2">PADUA, RUZZEL MICKO GARCIA</textarea>
+                                        </div>
+                                        <div class="ncs-signature-role-row">
+                                            <textarea id="f_tdaPreparedPos"
+                                                class="editable-input editable-textarea auto-resize sig-pos-input ncs-signature-input ncs-signature-textarea"
+                                                rows="2"></textarea>
+                                        </div>
+                                        <div class="ncs-signature-date-row">
+                                            <div class="ncs-signature-date-label">Date Signed</div>
+                                            <div class="ncs-signature-date-cell"></div>
+                                        </div>
+                                    </div>
+
+                                    <div class="tda-signature-column sig-column ncs-signature-panel">
+                                        <div class="sig-title-bar">APPROVED BY</div>
+                                        <div class="ncs-signature-blank"></div>
+                                        <div class="ncs-signature-name-row">
+                                            <textarea id="f_tdaApprovedName"
+                                                class="editable-input editable-textarea auto-resize sig-name-input center-text ncs-signature-input ncs-signature-textarea"
+                                                data-signer-roster="approved" rows="2">MENDEZ, PAUL ALDRIN</textarea>
+                                        </div>
+                                        <div class="ncs-signature-role-row">
+                                            <textarea id="f_tdaApprovedPos"
+                                                class="editable-input editable-textarea auto-resize sig-pos-input center-text ncs-signature-input ncs-signature-textarea"
+                                                rows="2">ITSM Lead and Asset Management Lead</textarea>
+                                        </div>
+                                        <div class="ncs-signature-date-row">
+                                            <div class="ncs-signature-date-label">Date Signed</div>
+                                            <div class="ncs-signature-date-cell"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                <!-- End Template 1B -->
+
+                <!-- Template 2: IT Asset Return Form -->
+                <div id="template-return" class="form-template">
+                    <div id="returnForm" class="printable-form">
+                        <div class="form-top-row">
+                            <img src="assets/img/ncs-logo-optimized.png" alt="NCS Logo" class="yondu-logo-img ncs-logo-img" width="720" height="259">
+                        </div>
+
+                        <div class="form-title-bar ncs-form-title mt-spacing" id="retFormTitle">
+                            IT ASSET RETURN FORM
+                        </div>
+
+                            <table class="info-table ncs-info-table ncs-return-info-table">
+                            <tbody>
+                            <tr>
+                                <td class="label">Employee Name</td>
+                                <td class="value center-text">
+                                    <input type="text" id="f_retName" class="editable-input center-text">
+                                </td>
+                                <td class="label">Email Address</td>
+                                <td class="value center-text"><input type="text" id="f_retEmail"
+                                        class="editable-input center-text"></td>
+                            </tr>
+                            <tr>
+                                <td class="label">Employee Number</td>
+                                <td class="value center-text">
+                                    <input type="text" id="f_retEmpNo" class="editable-input center-text">
+                                </td>
+                                <td class="label">Status</td>
+                                <td class="value center-text">
+                                    <div class="combobox-wrapper">
+                                        <input type="text" id="f_retStatus"
+                                            class="editable-input combobox-input center-text">
+                                        <button type="button" class="combobox-toggle"
+                                            data-target="f_retStatus">&#9660;</button>
+                                        <div class="combobox-options" id="f_retStatus_options">
+                                            <div class="combobox-option" data-value="RETURNED/RESIGN">RETURNED/RESIGN
+                                            </div>
+                                            <div class="combobox-option" data-value="REFRESH/PURCHASED">REFRESH/PURCHASED</div>
+                                            <div class="combobox-option" data-value="RETURNED/REFRESH">RETURNED/REFRESH
+                                            </div>
+                                            <div class="combobox-option" data-value="RETURNED/REPAIR">RETURNED/REPAIR</div>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="label">Business Unit</td>
+                                <td class="value center-text">
+                                    <input type="text" id="f_retBU" class="editable-input center-text">
+                                </td>
+                                <td class="label">Returned Date</td>
+                                <td class="value">
+                                    <div class="custom-date-wrapper">
+                                        <input type="text" id="f_retDate_text" class="editable-input custom-date-text">
+                                        <input type="date" id="f_retDate" class="editable-input custom-date-native">
+                                    </div>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+
+                        <table class="details-table ncs-details-table ncs-return-table mt-spacing">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Asset Tag</th>
+                                    <th scope="col" id="retDescHeader">Laptop Description</th>
+                                    <th scope="col">Serial Number</th>
+                                    <th scope="col" id="retRemarksHeader">Remarks</th>
+                                    <th scope="col">Asset Condition</th>
+                                    <th scope="col">Asset Condition Remarks</th>
+                                </tr>
+                            </thead>
+                            <tbody id="returnDetailsBody">
+                                <tr>
+                                    <td class="center-text"><input type="text" id="f_retTag" class="editable-input center-text"></td>
+                                    <td class="center-text"><textarea id="f_retDesc"
+                                            class="editable-input auto-resize center-text ncs-description-field" rows="1"></textarea></td>
+                                    <td class="center-text"><input type="text" id="f_retSerial" class="editable-input center-text"></td>
+                                    <td class="center-text">
+                                        <div class="combobox-wrapper">
+                                            <textarea id="f_retRemarks"
+                                                class="editable-textarea auto-resize center-text" rows="1"></textarea>
+                                            <button type="button" class="combobox-toggle"
+                                                data-target="f_retRemarks">&#9660;</button>
+                                            <div class="combobox-options" id="f_retRemarks_options"></div>
+                                        </div>
+                                    </td>
+                                    <td class="condition-cell ncs-condition-cell" rowspan="2">
+                                        <div class="ncs-condition-option"><span class="ncs-condition-flag" aria-hidden="true"></span><span>Unit received in good condition</span></div>
+                                    </td>
+                                    <td class="condition-cell ncs-condition-remarks" rowspan="4">
+                                        <div class="ncs-condition-remarks-text">Specify the damage here if applicable</div>
+                                    </td>
+                                </tr>
+                                <tr class="empty-row">
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                                <tr class="empty-row">
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td class="condition-cell ncs-condition-cell" rowspan="2">
+                                        <div class="ncs-condition-option"><span class="ncs-condition-flag" aria-hidden="true"></span><span>Unit received with damage</span></div>
+                                    </td>
+                                </tr>
+                                <tr class="empty-row">
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td class="condition-cell ncs-condition-cell"></td>
+                                    <td class="condition-cell ncs-condition-remarks"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <div class="ncs-divider-bar ncs-return-divider" aria-hidden="true"></div>
+                        <div class="affirmation-box ncs-affirmation-box ncs-return-affirmation">
+                            <i>I hereby affirm that I have received the unit in good condition and acknowledge that it is free from any visible damage at the time of receipt.</i>
+                        </div>
+
+                        <div class="ncs-signatures-grid ncs-return-signatures mt-spacing">
+                            <div class="ncs-signature-panel ncs-return-signature-panel">
+                                <div class="sig-title-bar">EMPLOYEE</div>
+                                <div class="ncs-signature-blank"></div>
+                                <div class="ncs-signature-name-row">
+                                    <textarea class="editable-input editable-textarea auto-resize sig-name-input ncs-signature-input ncs-signature-textarea" id="f_retEmployeeSigName" rows="2" placeholder="SURNAME, FULL NAME"></textarea>
+                                </div>
+                                <div class="ncs-signature-role-row">
+                                    <textarea class="editable-input editable-textarea auto-resize sig-pos-input ncs-signature-input ncs-signature-textarea" id="f_retEmployeeSigRole" rows="2" placeholder="Full Name and Signature"></textarea>
+                                </div>
+                                <div class="ncs-signature-date-row ncs-return-mobile-row">
+                                    <div class="ncs-signature-date-label">Mobile Number</div>
+                                    <div class="ncs-signature-date-cell">
+                                        <input type="text" id="f_retContact" class="editable-input center-text ncs-signature-input">
+                                    </div>
+                                </div>
+                                <div class="ncs-signature-date-row">
+                                    <div class="ncs-signature-date-label">Date Signed</div>
+                                    <div class="ncs-signature-date-cell"></div>
+                                </div>
+                            </div>
+                            <div class="ncs-signature-panel ncs-return-signature-panel">
+                                <div class="sig-title-bar">CORP IT &amp; INFRA PERSONNEL IN-CHARGE</div>
+                                <div class="ncs-signature-blank"></div>
+                                <div class="ncs-signature-name-row">
+                                    <textarea class="editable-input editable-textarea auto-resize sig-name-input ncs-signature-input ncs-signature-textarea" id="f_retITSig" data-signer-roster="issued" rows="2">PADUA, RUZZEL MICKO GARCIA</textarea>
+                                </div>
+                                <div class="ncs-signature-role-row">
+                                    <textarea class="editable-input editable-textarea auto-resize sig-pos-input ncs-signature-input ncs-signature-textarea" id="f_retITRole" rows="2">IT Asset Specialist / Custodian</textarea>
+                                </div>
+                                <div class="ncs-signature-date-row">
+                                    <div class="ncs-signature-date-label">Date Signed</div>
+                                    <div class="ncs-signature-date-cell"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-footer mt-spacing ncs-hidden-meta">
+                            <div class="footer-col">V2</div>
+                            <div class="footer-col center" id="retFooterText">IT Asset Return Form</div>
+                            <div class="footer-col right">CONFIDENTIAL</div>
+                        </div>
+                    </div>
+                    <div id="returnPrintOverflow" class="return-print-overflow print-only"></div>
+                </div>
+                <!-- End Template 2 -->
+
+
+                <!-- Template 3: Asset Sanitization Form -->
+                <div id="template-sanitization" class="form-template">
+                    <div id="sanitizationForm" class="printable-form">
+                        <div class="form-top-row">
+                            <img src="assets/img/ncs-logo-optimized.png" alt="NCS Logo" class="yondu-logo-img ncs-logo-img" width="720" height="259">
+                        </div>
+
+                        <div class="form-title-bar ncs-form-title mt-spacing">
+                            IT ASSET SANITATION FORM
+                        </div>
+
+                            <table class="info-table ncs-info-table">
+                            <tbody>
+                            <tr>
+                                <td class="label">Employee Name</td>
+                                <td class="value center-text">
+                                    <input type="text" id="f_sanName" class="editable-input center-text">
+                                </td>
+                                <td class="label">Email Address</td>
+                                <td class="value center-text"><input type="text" id="f_sanEmail"
+                                        class="editable-input center-text"></td>
+                            </tr>
+                            <tr>
+                                <td class="label">Employee Number</td>
+                                <td class="value center-text">
+                                    <input type="text" id="f_sanEmpNo" class="editable-input center-text">
+                                </td>
+                                <td class="label">Status</td>
+                                <td class="value center-text">
+                                    <div class="combobox-wrapper">
+                                        <input type="text" id="f_sanStatus"
+                                            class="editable-input combobox-input center-text">
+                                        <button type="button" class="combobox-toggle"
+                                            data-target="f_sanStatus">&#9660;</button>
+                                        <div class="combobox-options" id="f_sanStatus_options">
+                                            <div class="combobox-option" data-value="RETURNED/RESIGN">RETURNED/RESIGN
+                                            </div>
+                                            <div class="combobox-option" data-value="REFRESH/PURCHASED">REFRESH/PURCHASED</div>
+                                            <div class="combobox-option" data-value="RETURNED/REFRESH">RETURNED/REFRESH
+                                            </div>
+                                            <div class="combobox-option" data-value="RETURNED/REPAIR">RETURNED/REPAIR</div>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="label">Business Unit</td>
+                                <td class="value center-text">
+                                    <input type="text" id="f_sanBU" class="editable-input center-text">
+                                </td>
+                                <td class="label">Returned Date</td>
+                                <td class="value">
+                                    <div class="custom-date-wrapper">
+                                        <input type="text" id="f_sanDate_text" class="editable-input custom-date-text">
+                                        <input type="date" id="f_sanDate" class="editable-input custom-date-native">
+                                    </div>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+
+                        <div class="ncs-hidden-meta">
+                            <input type="text" id="f_sanContact" class="editable-input center-text">
+                        </div>
+
+                        <table class="details-table ncs-details-table ncs-sanitization-table mt-spacing">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Asset Tag</th>
+                                    <th scope="col" id="sanDescHeader">Laptop Description</th>
+                                    <th scope="col">Serial Number</th>
+                                    <th scope="col" id="sanRemarksHeader">Remarks</th>
+                                    <th scope="col">Asset Condition</th>
+                                    <th scope="col">Asset Condition Remarks</th>
+                                </tr>
+                            </thead>
+                            <tbody id="sanitizationDetailsBody">
+                                <tr>
+                                    <td class="center-text"><input type="text" id="f_sanTag" class="editable-input center-text"></td>
+                                    <td class="center-text"><textarea id="f_sanDesc"
+                                            class="editable-input auto-resize center-text ncs-description-field" rows="1"></textarea></td>
+                                    <td class="center-text"><input type="text" id="f_sanSerial" class="editable-input center-text"></td>
+                                    <td class="center-text">
+                                        <div class="combobox-wrapper" id="f_sanRemarksCombobox">
+                                            <textarea id="f_sanRemarks"
+                                                class="editable-textarea auto-resize center-text" rows="1"></textarea>
+                                            <button type="button" class="combobox-toggle"
+                                                data-target="f_sanRemarks">&#9660;</button>
+                                            <div class="combobox-options" id="f_sanRemarks_options"></div>
+                                        </div>
+                                    </td>
+                                    <td class="condition-cell ncs-condition-cell" rowspan="2">
+                                        <div class="ncs-condition-option"><span class="ncs-condition-flag" aria-hidden="true"></span><span>Unit received in good condition</span></div>
+                                    </td>
+                                    <td class="condition-cell ncs-condition-remarks" rowspan="4">
+                                        <div class="ncs-condition-remarks-text">Specify the damage here if applicable</div>
+                                    </td>
+                                </tr>
+                                <tr class="empty-row">
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                                <tr class="empty-row">
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td class="condition-cell ncs-condition-cell" rowspan="2">
+                                        <div class="ncs-condition-option"><span class="ncs-condition-flag" aria-hidden="true"></span><span>Unit received with damage</span></div>
+                                    </td>
+                                </tr>
+                                <tr class="empty-row">
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <div class="ncs-divider-bar" aria-hidden="true"></div>
+
+                        <div class="affirmation-box bold-affirmation ncs-affirmation-box">
+                            <i>I hereby confirm that the above asset has been sanitized and cleared of all data in
+                                accordance with company policies and applicable data protection regulations.</i>
+                        </div>
+
+                        <div class="sanitization-signatures ncs-san-signatures mt-spacing">
+                            <div class="ncs-signatures-grid ncs-san-grid-top">
+                                <div class="ncs-signature-panel ncs-signature-panel-small">
+                                    <div class="sig-title-bar">RETURNEE</div>
+                                    <div class="ncs-signature-blank"></div>
+                                    <div class="ncs-signature-name-row">
+                                        <textarea id="f_sanReturneeName" class="editable-input editable-textarea auto-resize sig-name-input ncs-signature-input ncs-signature-textarea" rows="2">SURNAME, FULL NAME</textarea>
+                                    </div>
+                                    <div class="ncs-signature-role-row">
+                                        <textarea id="f_sanReturneeRole" class="editable-input editable-textarea auto-resize sig-pos-input ncs-signature-input ncs-signature-textarea" rows="2">Full Name and Signature</textarea>
+                                    </div>
+                                    <div class="ncs-signature-date-row">
+                                        <div class="ncs-signature-date-label">Date Signed</div>
+                                        <div class="ncs-signature-date-cell"></div>
+                                    </div>
+                                </div>
+                                <div class="ncs-signature-panel ncs-signature-panel-small">
+                                    <div class="sig-title-bar">TECHNICAL SUPPORT CONFORME</div>
+                                    <div class="ncs-signature-blank"></div>
+                                    <div class="ncs-signature-name-row">
+                                        <textarea id="f_sanTechSupportName" class="editable-input editable-textarea auto-resize sig-name-input ncs-signature-input ncs-signature-textarea" data-signer-roster="technical_support" rows="2">SURNAME, FULL NAME</textarea>
+                                    </div>
+                                    <div class="ncs-signature-role-row">
+                                        <textarea id="f_sanTechSupportRole" class="editable-input editable-textarea auto-resize sig-pos-input ncs-signature-input ncs-signature-textarea" rows="2">Corp IT &amp; Infra Technical Support</textarea>
+                                    </div>
+                                    <div class="ncs-signature-date-row">
+                                        <div class="ncs-signature-date-label">Date Signed</div>
+                                        <div class="ncs-signature-date-cell"></div>
+                                    </div>
+                                </div>
+                                <div class="ncs-signature-panel ncs-signature-panel-small">
+                                    <div class="sig-title-bar">INFOSEC CONFORME</div>
+                                    <div class="ncs-signature-blank"></div>
+                                    <div class="ncs-signature-name-row">
+                                        <textarea id="sanInfoSecName" class="editable-input editable-textarea auto-resize sig-name-input ncs-signature-input ncs-signature-textarea" data-signer-roster="infosec" rows="2">GANDIA, STEFFI MAGNO</textarea>
+                                    </div>
+                                    <div class="ncs-signature-role-row">
+                                        <textarea id="f_sanInfoSecRole" class="editable-input editable-textarea auto-resize sig-pos-input ncs-signature-input ncs-signature-textarea" rows="2">Information Security</textarea>
+                                    </div>
+                                    <div class="ncs-signature-date-row">
+                                        <div class="ncs-signature-date-label">Date Signed</div>
+                                        <div class="ncs-signature-date-cell"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="ncs-signatures-grid ncs-san-grid-bottom">
+                                <div class="ncs-signature-panel ncs-signature-panel-small">
+                                    <div class="sig-title-bar">IT ASSET MANAGEMENT</div>
+                                    <div class="ncs-signature-blank"></div>
+                                    <div class="ncs-signature-name-row">
+                                        <textarea id="sanAssetManager" class="editable-input editable-textarea auto-resize sig-name-input ncs-signature-input ncs-signature-textarea" data-signer-roster="issued" rows="2">PADUA, RUZZEL MICKO GARCIA</textarea>
+                                    </div>
+                                    <div class="ncs-signature-role-row">
+                                        <textarea id="f_sanAssetManagerRole" class="editable-input editable-textarea auto-resize sig-pos-input ncs-signature-input ncs-signature-textarea" rows="2">IT Asset Specialist / Custodian</textarea>
+                                    </div>
+                                    <div class="ncs-signature-date-row">
+                                        <div class="ncs-signature-date-label">Date Signed</div>
+                                        <div class="ncs-signature-date-cell"></div>
+                                    </div>
+                                </div>
+                                <div class="ncs-signature-panel ncs-signature-panel-small">
+                                    <div class="sig-title-bar">CORP IT &amp; INFRA LEAD / HEAD</div>
+                                    <div class="ncs-signature-blank"></div>
+                                    <div class="ncs-signature-name-row">
+                                        <textarea id="f_sanLeadName" class="editable-input editable-textarea auto-resize sig-name-input ncs-signature-input ncs-signature-textarea" data-signer-roster="approved" rows="2">MENDEZ, PAUL ALDRIN</textarea>
+                                    </div>
+                                    <div class="ncs-signature-role-row">
+                                        <textarea id="f_sanLeadRole" class="editable-input editable-textarea auto-resize sig-pos-input ncs-signature-input ncs-signature-textarea" rows="2">ITSM Lead and Asset Management Lead</textarea>
+                                    </div>
+                                    <div class="ncs-signature-date-row">
+                                        <div class="ncs-signature-date-label">Date Signed</div>
+                                        <div class="ncs-signature-date-cell"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-footer mt-spacing ncs-hidden-meta">
+                            <div class="footer-col right padding-right-lg" id="sanFooterText">Asset Sanitation Form
+                            </div>
+                        </div>
+                    </div>
+                    <div id="sanitizationPrintOverflow" class="sanitization-print-overflow print-only"></div>
+                </div>
+                <!-- End Template 3 -->
+            </div>
+
+        </main>
+    </div>
+
+    <div id="tutorialOverlay" class="tutorial-overlay hide hide-print" aria-hidden="true" inert>
+        <div id="tutorialSpotlight" class="tutorial-spotlight"></div>
+        <button id="tutorialSkipBtn" class="tutorial-skip-btn hide" type="button" aria-label="Exit tutorial">
+            <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+            <span>Exit tour</span>
+        </button>
+        <div id="tutorialCursor" class="tutorial-cursor" aria-hidden="true"></div>
+        <aside id="tutorialBubble" class="tutorial-bubble" role="dialog" aria-modal="true" aria-live="polite" aria-label="Tutorial guide">
+            <div class="tutorial-bubble-header">
+                <div class="tutorial-bubble-meta">
+                    <div id="tutorialStepCount" class="tutorial-step-count"></div>
+                    <div id="tutorialProgress" class="tutorial-progress" role="progressbar"
+                        aria-label="Tutorial progress" aria-valuemin="1" aria-valuemax="9" aria-valuenow="1">
+                        <span id="tutorialProgressBar"></span>
+                    </div>
+                </div>
+                <div class="tutorial-voice-controls">
+                    <button id="tutorialReplayBtn" class="tutorial-voice-btn" type="button" aria-label="Replay tutorial voice">
+                        <i class="fa-solid fa-rotate-right"></i>
+                    </button>
+                    <button id="tutorialVoiceToggleBtn" class="tutorial-voice-btn" type="button" aria-label="Mute tutorial voice">
+                        <i class="fa-solid fa-volume-high"></i>
+                    </button>
+                </div>
+            </div>
+            <h3 id="tutorialTitle">Tutorial</h3>
+            <p id="tutorialText" class="tutorial-text"></p>
+            <div class="tutorial-actions">
+                <button id="tutorialBackBtn" class="tutorial-nav-btn tutorial-nav-btn-secondary" type="button">
+                    <i class="fa-solid fa-arrow-left" aria-hidden="true"></i>
+                    <span>Back</span>
+                </button>
+                <span class="tutorial-keyboard-hint" aria-hidden="true">Use ← → keys</span>
+                <button id="tutorialNextBtn" class="tutorial-nav-btn tutorial-nav-btn-primary" type="button"
+                    aria-label="Next tutorial step">Next</button>
+            </div>
+        </aside>
+        <aside id="tutorialExamplePanel" class="tutorial-example-panel hide" aria-hidden="true" aria-label="Tutorial example">
+            <div id="tutorialExampleBody"></div>
+        </aside>
+    </div>
+
+    <script src="assets/vendor/papaparse/papaparse.min.js?v=20260320a"></script>
+    <script src="assets/js/config.js?v=20260729autofillwarning1"></script>
+    <script src="assets/js/helpers.js?v=20260729autofillwarning1"></script>
+    <script src="assets/js/signer-rosters.js?v=20260728opt1"></script>
+    <script src="assets/js/source-management.js?v=20260729newhireposition1"></script>
+    <script src="assets/js/search.js?v=20260729autofillwarning1"></script>
+    <script src="assets/js/form-fill.js?v=20260729remarksoptions2"></script>
+    <script src="assets/js/print.js?v=20260729printfilename1"></script>
+    <script src="assets/js/sheet-copy.js?v=20260729copystatus3"></script>
+    <script src="assets/js/theme.js?v=20260728opt1"></script>
+    <script src="assets/js/tutorial-loader.js?v=20260728tutorial1" data-tutorial-src="assets/js/tutorial.js?v=20260728tutorial1"></script>
+    <script src="assets/js/app.js?v=20260728opt1"></script>
+</body>
+
+</html>

@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#071c3b">
+    <title>NCS Theme Settings</title>
+    <link rel="stylesheet" href="assets/vendor/inter/inter.css?v=20260728opt1">
+    <link rel="stylesheet" href="assets/vendor/fontawesome/css/ncs-icons.css?v=20260728opt1">
+    <link rel="stylesheet" href="assets/css/base.css?v=20260728opt1">
+    <link rel="stylesheet" href="assets/css/components.css?v=20260728opt1">
+    <link rel="stylesheet" href="assets/css/settings.css?v=20260728opt1">
+    <link rel="stylesheet" href="assets/css/experience.css?v=20260728opt1">
+</head>
+
+<body class="settings-page">
+    <div class="settings-page-shell" data-theme-settings>
+        <header class="settings-page-header">
+            <a href="index.html" class="settings-back-link">
+                <i class="fa-solid fa-arrow-left"></i>
+                <span>Main App</span>
+            </a>
+            <div class="settings-header-status">
+                <span class="settings-chip">Shared with index</span>
+                <span class="settings-chip">Saved instantly</span>
+                <div class="settings-inline-status">
+                    <span class="settings-inline-label">Current Mode</span>
+                    <div class="settings-inline-value" id="themePreviewMode">Blend / Filter Off / Dark Off</div>
+                </div>
+            </div>
+        </header>
+
+        <div class="settings-grid">
+            <section class="settings-card settings-card--colors">
+                <div class="settings-card-header">
+                    <div>
+                        <div class="settings-section-label">Color Theme</div>
+                        <h2>Pick your two anchor colors</h2>
+                    </div>
+                    <p>These colors drive the entire shell and its static gradient background.</p>
+                </div>
+
+                <div class="theme-color-grid">
+                    <div class="theme-color-control">
+                        <label for="themePrimaryColor">Primary Color</label>
+                        <div class="theme-color-input-wrap">
+                            <input type="color" id="themePrimaryColor" value="#172d67">
+                            <output id="themePrimaryValue" for="themePrimaryColor">#172D67</output>
+                        </div>
+                    </div>
+
+                    <div class="theme-color-control">
+                        <label for="themeSecondaryColor">Secondary Color</label>
+                        <div class="theme-color-input-wrap">
+                            <input type="color" id="themeSecondaryColor" value="#00a8e0">
+                            <output id="themeSecondaryValue" for="themeSecondaryColor">#00A8E0</output>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="theme-action-row">
+                    <button type="button" class="btn btn-outline" id="themeGradientOnBtn">Blend Gradient</button>
+                    <button type="button" class="btn btn-outline" id="themeGradientOffBtn">Solid Base</button>
+                    <button type="button" class="btn btn-outline" id="themeResetBtn">Reset Theme</button>
+                </div>
+            </section>
+
+            <section class="settings-card settings-card--comfort">
+                <div class="settings-card-header">
+                    <div>
+                        <div class="settings-section-label">Form Comfort</div>
+                        <h2>Reduce preview brightness</h2>
+                    </div>
+                    <p>Adjust only the on-screen form paper tone for sensitive eyes. Print stays default white.</p>
+                </div>
+
+                <div class="form-comfort-layout">
+                    <div class="form-comfort-controls">
+                        <div class="theme-action-row">
+                            <button type="button" class="btn btn-outline" id="formToneOnBtn">Comfort On</button>
+                            <button type="button" class="btn btn-outline" id="formDarkModeBtn">Dark Mode Off</button>
+                        </div>
+
+                        <div class="theme-range-control">
+                            <label for="formToneLevel">Blue Light Filter Level</label>
+                            <div class="theme-range-topline">
+                                <span>Default Form</span>
+                                <output id="formToneLevelValue" for="formToneLevel">0%</output>
+                                <span>Blue Light Filter</span>
+                            </div>
+                            <input type="range" id="formToneLevel" min="0" max="100" step="1" value="0">
+                            <small class="theme-range-helper" id="formToneHelperText">Turn on Comfort to adjust the filter.</small>
+                        </div>
+                    </div>
+
+                    <div class="form-comfort-preview">
+                        <div class="form-comfort-preview-label">Live NCS Form Preview</div>
+                        <div class="form-comfort-preview-paper">
+                            <div class="form-comfort-preview-brand" aria-hidden="true">
+                                <span class="form-comfort-preview-brand-mark">
+                                    <img src="assets/img/ncs-logo-optimized.png" alt="" width="720" height="259">
+                                </span>
+                                <span class="form-comfort-preview-brand-copy">Asset Operations</span>
+                            </div>
+                            <div class="form-comfort-preview-bar">Asset Accountability Form</div>
+                            <div class="form-comfort-preview-table">
+                                <div class="form-comfort-preview-cell form-comfort-preview-cell--label">Employee Name</div>
+                                <div class="form-comfort-preview-cell"></div>
+                                <div class="form-comfort-preview-cell form-comfort-preview-cell--label">Position</div>
+                                <div class="form-comfort-preview-cell"></div>
+                            </div>
+                            <div class="form-comfort-preview-detail-head">
+                                <span>Asset Tag</span>
+                                <span>Model / Description</span>
+                                <span>Serial / IMEI</span>
+                            </div>
+                            <div class="form-comfort-preview-detail-row">
+                                <span>LAPTOP-001</span>
+                                <span>ACER TRAVELMATE P2</span>
+                                <span>SN-7J3E...</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <script src="assets/js/theme.js?v=20260728opt1"></script>
+</body>
+
+</html>

@@ -1,0 +1,92 @@
+Read `AGENTS.md` first.
+This repository already has the Codex protocol scaffold installed at the root.
+
+This scaffold is universal. Apply it to the current project folder, inspect first, change later.
+
+Default behavior:
+- caveman mode on
+- strict mode on
+- concise output by default
+- no explanation unless asked
+- no clarification questions unless blocked
+- no file edits until inspection is done
+- no manual searching when protocol tools can answer
+- smallest useful context only
+- answer only
+- no progress narration
+- no recap unless asked
+- fragments/bullets/file refs > full sentences
+- one-line answer if enough
+
+Always-on protocol features:
+- `npm run doctor` before deeper work
+- `workspace_context` and `workspace_outline` on first pass
+- `workspace_diff` before edits in git repos
+- `workspace_search` and `workspace_read` for targeted inspection
+- `test_run` before declaring code changes done
+- `screenshot` for browser/UI state
+- `shadow_worktree` only when isolation is required
+- `terminal_stream` when bridge logs matter
+
+Operating order:
+1. Run `npm run doctor`.
+2. If bridge is alive, run `npm run probe`.
+3. Use `workspace_context` on the current folder.
+4. Use `workspace_outline` on the current folder.
+5. If repo is git, use `workspace_diff` before any edits.
+6. Use `workspace_search` only for targeted facts.
+7. Use `workspace_read` only for bounded line ranges.
+8. Use `test_run` for verification.
+9. Use `screenshot` when UI, layout, or browser state matters.
+10. Use `shadow_worktree` only for isolated experiments.
+
+Protocol feature map:
+- `workspace_context` = stack, package manager, test command, git status, top-level entries
+- `workspace_outline` = file/symbol/headings summary
+- `workspace_search` = targeted search with line hits
+- `workspace_read` = exact file slices with line numbers
+- `workspace_diff` = current edits, untracked files, bounded hunks
+- `test_run` = run project tests with bounded output
+- `screenshot` = capture desktop, URL, or local file with diagnostics
+- `terminal_stream` = read live bridge log tail
+- `shadow_worktree` = create or inspect one isolated shadow worktree
+
+What to inspect first:
+- stack / framework
+- entrypoints
+- package manager
+- test / lint / build commands
+- config files and env files
+- main source files
+- docs that describe project-specific rules
+
+What to report back:
+- exact file paths
+- line numbers when possible
+- blockers and risks
+- weird behavior
+- missing commands or missing deps
+- whether bridge, tests, and lint are available
+
+Rules:
+- Do not edit anything yet unless explicitly asked.
+- Do not guess when tools can answer.
+- Do not switch out of caveman mode unless explicitly told `/normal`.
+- Do not switch out of strict mode unless explicit tradeoff needed.
+- Do not narrate process or list internal thinking.
+- Keep answers concise and file-based.
+- Prefer exact paths over summaries.
+- Prefer smallest useful file slice over whole-file dumps.
+- If UI or browser behavior is involved, use `screenshot` before conclusions.
+- If tests matter, use `test_run` instead of describing expected behavior.
+- If bridge is down, fix setup or report blocker before continuing.
+- If output is too long, trim it and keep the key lines only.
+- If a one-line answer is enough, use one line.
+
+Efficiency rule:
+- Use broader context only when smaller context is insufficient.
+- Prefer one targeted protocol call over repeated manual reading.
+- Preserve output quality by verifying code paths, tests, and screenshots when the change can affect behavior.
+- Prefer `Fixed:` / `Changed:` / `Verified:` / `Blocker:` labels over paragraphs.
+
+If `CODEX PROTOCOLS` still exists in this repository, treat it as the source archive only. Use the root-level `package.json`, `mcp-schema.json`, `bootstrap.ps1`, and `.mcp/` as the active scaffold.

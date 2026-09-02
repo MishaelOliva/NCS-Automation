@@ -1,0 +1,51 @@
+{
+  "purpose": "Static attachment point for the protocol MCP bridge",
+  "sdk": {
+    "@modelcontextprotocol/sdk": "1.29.0",
+    "playwright-core": "^1.59.1",
+    "zod": "^3.23.8"
+  },
+  "bridge": {
+    "script": ".mcp/bridge.mjs",
+    "transport": "streamable-http",
+    "endpoint": "http://127.0.0.1:7331/mcp",
+    "tools": [
+      "terminal_stream",
+      "screenshot",
+      "test_run",
+      "workspace_context",
+      "workspace_search",
+      "workspace_read",
+      "workspace_outline",
+      "workspace_diff",
+      "shadow_worktree"
+    ]
+  },
+  "bootstrap": {
+    "script": "bootstrap.ps1",
+    "requiredTools": [
+      "PowerShell",
+      "winget or choco",
+      "Node.js LTS",
+      "npm"
+    ],
+    "behavior": "Install Node.js LTS when missing, then install project dependencies and run protocol checks."
+  },
+  "hardwareProfile": {
+    "detectedAtRuntime": true,
+    "source": ".mcp/doctor.mjs",
+    "cpu": null,
+    "logicalThreads": null,
+    "reservedForOSAndIDE": null,
+    "gpu": null,
+    "vramGB": null,
+    "systemRamGB": null,
+    "embeddingPolicy": "4-bit quantized local embeddings; move to CPU above 85% VRAM"
+  },
+  "operatingRules": {
+    "maxParallelSubagents": 2,
+    "shadowWorktrees": 1,
+    "taskStyle": "short burst tasks",
+    "logStyle": "streamed, concise"
+  }
+}
