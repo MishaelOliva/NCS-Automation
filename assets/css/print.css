@@ -1,0 +1,2697 @@
+/* Print-only value mirrors stay hidden until the print media rules reveal them. */
+.ncs-print-description {
+    display: none;
+}
+
+.ncs-print-info-value {
+    display: none;
+}
+
+.ncs-print-signature-value {
+    display: none;
+}
+
+/* Print Styles */
+@media print {
+    :root {
+        --ncs-print-fit-scale: 0.99;
+    }
+
+    #template-accountability {
+        --ncs-print-fit-scale: 1.04;
+    }
+
+    @page {
+        size: A4 landscape;
+        margin: 0;
+    }
+
+    body {
+        background: white;
+        background-image: none;
+        color: black;
+        overflow: visible;
+        display: block;
+        margin: 0;
+        padding: 0;
+        /* Let page margins handle it */
+        min-height: auto;
+    }
+
+    .theme-backdrop {
+        display: none !important;
+    }
+
+    .app-container {
+        display: block;
+        height: auto;
+        padding: 0;
+    }
+
+    .main-content {
+        padding: 0;
+        overflow: visible;
+        display: block;
+    }
+
+    .hide-print {
+        display: none !important;
+    }
+
+    .print-only {
+        display: block !important;
+    }
+
+    .form-template {
+        display: none !important;
+    }
+
+    .form-template[data-print-visible="true"] {
+        display: block !important;
+    }
+
+    .printable-form {
+        box-shadow: none;
+        padding: 5mm 8mm;
+        /* Reduced padding */
+        width: 100%;
+        height: auto;
+        /* Allow form to shrink */
+        min-height: 175mm;
+        max-height: 185mm;
+        /* Hard cap before overflow */
+        max-width: none;
+        margin: 0;
+        border: 1px solid black !important;
+        transform: none;
+        zoom: var(--ncs-print-fit-scale);
+        display: flex;
+        flex-direction: column;
+        page-break-after: always;
+        /* Ensure each form template prints on a new page */
+        page-break-inside: avoid;
+        overflow: hidden;
+        /* Stop leaks */
+        box-sizing: border-box;
+    }
+
+    .form-template:last-child .printable-form {
+        page-break-after: avoid;
+        /* Don't add a blank 3rd page */
+    }
+
+    #template-sanitization[data-print-visible="true"] {
+        page-break-after: avoid;
+        break-after: avoid;
+    }
+
+    #template-accountability:not(.is-paged-print) #accountabilityPrintOverflow {
+        display: none !important;
+    }
+
+    #template-accountability.is-paged-print #accountabilityForm {
+        display: none !important;
+    }
+
+    #template-accountability.is-paged-print #accountabilityPrintOverflow {
+        display: block !important;
+    }
+
+    #template-return:not(.is-paged-print) #returnPrintOverflow,
+    #template-sanitization:not(.is-paged-print) #sanitizationPrintOverflow {
+        display: none !important;
+    }
+
+    #template-return.is-paged-print #returnForm,
+    #template-sanitization.is-paged-print #sanitizationForm {
+        display: none !important;
+    }
+
+    #template-return.is-paged-print #returnPrintOverflow,
+    #template-sanitization.is-paged-print #sanitizationPrintOverflow {
+        display: block !important;
+    }
+
+    .authority-section,
+    .form-footer {
+        margin-top: auto !important;
+        padding-top: 5px;
+        /* Tighter spacing */
+    }
+
+    .sig-details {
+        margin-top: 10px;
+        /* Compress signature spacing for print */
+    }
+
+    .sig-issued-details .mt-spacing-large {
+        margin-top: 10px;
+    }
+
+    #template-accountability .assignee-details {
+        margin-top: 18px;
+    }
+
+    #template-accountability .assignee-details .pickup-date-wrapper {
+        margin: 2px 0 4px 0;
+    }
+
+    #template-accountability .assignee-header-row {
+        display: flex;
+        flex-wrap: nowrap;
+        align-items: flex-start;
+        justify-content: flex-start;
+        gap: 6px;
+        margin: 2px 0 2px 0;
+    }
+
+    #template-accountability .assignee-name-block {
+        flex: 1 1 auto;
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+        box-sizing: border-box;
+    }
+
+    #template-accountability .assignee-date-inline {
+        flex: 0 0 auto;
+        align-self: flex-start;
+        padding-top: 0;
+        margin-top: -1px;
+        white-space: nowrap;
+    }
+
+    #template-accountability .issued-header-row {
+        display: flex;
+        flex-wrap: nowrap;
+        align-items: flex-start;
+        justify-content: flex-start;
+        gap: 6px;
+    }
+
+    #template-accountability .issued-name-block {
+        flex: 1 1 auto;
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+        box-sizing: border-box;
+    }
+
+    #template-accountability .issued-date-inline {
+        flex: 0 0 108px;
+        align-self: flex-start;
+        width: 108px;
+        padding-top: 0;
+        margin-top: -1px;
+        white-space: nowrap;
+    }
+
+    #template-accountability .issued-name-block .accountability-print-signature-name {
+        width: 100%;
+        max-width: 100%;
+        display: block;
+        font-size: 0.85rem;
+        letter-spacing: normal;
+    }
+
+    #template-accountability .assignee-name-block .accountability-print-signature-name,
+    #template-accountability .assignee-name-block .accountability-print-signature-role,
+    #template-accountability .issued-name-block .accountability-print-signature-name,
+    #template-accountability .assignee-date-inline .accountability-print-inline-date {
+        min-width: 0;
+        white-space: normal;
+        overflow-wrap: break-word;
+        word-break: break-word;
+    }
+
+    #template-accountability .assignee-name-block .accountability-print-signature-name {
+        width: 100%;
+        max-width: 100%;
+        display: block;
+    }
+
+    #template-accountability .assignee-date-inline .accountability-print-inline-date {
+        white-space: nowrap;
+    }
+
+    #template-accountability .issued-date-inline .accountability-print-inline-date {
+        white-space: nowrap;
+    }
+
+    #template-accountability .issued-date-inline .accountability-print-inline-date {
+        width: 100%;
+    }
+
+    #template-accountability .sig-issued {
+        margin-top: 2px;
+    }
+
+    #template-accountability .assignee-details .sig-issued-details {
+        margin-top: 8px;
+    }
+
+    #template-accountability .assignee-details .sig-issued-details .mt-spacing-large {
+        margin-top: 12px;
+    }
+
+    #template-accountability .assignee-details .sig-issued-details .sig-pos-input {
+        margin-bottom: 2px;
+    }
+
+    #template-accountability .sig-details {
+        margin-top: 6px;
+    }
+
+    #template-accountability #accountabilityApprovedByDetails:not([hidden]) {
+        margin-top: 44px;
+    }
+
+    #template-accountability .printable-form {
+        display: block;
+        padding: 3mm 5mm;
+        min-height: 0;
+        max-height: none;
+        width: 263mm;
+        margin: 0 auto;
+        zoom: var(--ncs-print-fit-scale);
+        page-break-after: auto;
+        break-after: auto;
+    }
+
+    #template-accountability .authority-section {
+        margin-top: 14px !important;
+        padding-top: 0 !important;
+    }
+
+    #template-accountability .auth-text {
+        margin-bottom: 8px;
+        line-height: 1.35;
+        padding: 1.05rem 5.5rem;
+    }
+
+    #template-accountability .signatures-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 24.5%));
+        justify-content: space-between;
+        align-items: start;
+        gap: 1.55rem;
+        margin-top: 8px;
+        padding: 0.7rem 0.3rem 0.4rem;
+        font-size: inherit;
+    }
+
+    #template-accountability .empty-row td {
+        height: 19px;
+    }
+
+    #template-accountability .details-table th,
+    #template-accountability .details-table td,
+    #template-accountability .accountability-print-page .details-table th,
+    #template-accountability .accountability-print-page .details-table td {
+        height: 1.28rem;
+        padding-top: 0.1rem;
+        padding-bottom: 0.1rem;
+    }
+
+    #template-accountability .sig-column,
+    #template-accountability .sig-column.right {
+        display: block;
+        width: auto;
+        vertical-align: top;
+        font-size: inherit;
+        text-align: initial;
+    }
+
+    #template-accountability .ncs-signature-column {
+        display: flex !important;
+        flex-direction: column;
+        gap: 0.45rem;
+    }
+
+    #template-accountability .sig-column.right .sig-title-bar {
+        display: block;
+        width: 100%;
+        margin-left: 0;
+    }
+
+    #template-accountability .accountability-print-page {
+        display: block;
+        padding: 3mm 5mm;
+        min-height: 0;
+        max-height: none;
+        width: 263mm;
+        margin: 0 auto;
+        zoom: var(--ncs-print-fit-scale);
+        page-break-after: always;
+        break-after: page;
+    }
+
+    #template-accountability .accountability-print-page:last-child {
+        page-break-after: avoid;
+    }
+
+    #template-accountability .accountability-print-page .authority-section {
+        margin-top: 14px !important;
+        padding-top: 0 !important;
+    }
+
+    #template-accountability .accountability-print-page .auth-text {
+        margin-bottom: 8px;
+        line-height: 1.35;
+        padding: 1.05rem 5.5rem;
+    }
+
+    #template-accountability .accountability-print-page .signatures-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 24.5%));
+        justify-content: space-between;
+        align-items: start;
+        gap: 1.55rem;
+        margin-top: 8px;
+        padding: 0.7rem 0.3rem 0.4rem;
+        font-size: inherit;
+    }
+
+    #template-accountability .accountability-print-page .sig-column,
+    #template-accountability .accountability-print-page .sig-column.right {
+        display: block;
+        width: auto;
+        vertical-align: top;
+        font-size: inherit;
+        text-align: initial;
+    }
+
+    #template-accountability .accountability-print-page .ncs-signature-column {
+        display: flex !important;
+        flex-direction: column;
+        gap: 0.45rem;
+    }
+
+    #template-accountability .accountability-print-page .sig-column.right .sig-title-bar {
+        display: block;
+        width: 100%;
+        margin-left: 0;
+    }
+
+    #template-accountability .accountability-print-page .assignee-details {
+        margin-top: 18px;
+    }
+
+    #template-accountability .accountability-print-page .sig-details {
+        margin-top: 6px;
+    }
+
+    #template-accountability .accountability-print-page .sig-details:has(.accountability-print-signature-name) {
+        margin-top: 44px;
+    }
+
+    #template-accountability .accountability-print-page .sig-issued {
+        margin-top: 2px;
+    }
+
+    #template-accountability .accountability-print-page .assignee-details .sig-issued-details {
+        margin-top: 8px;
+    }
+
+    #template-accountability .accountability-print-page .assignee-details .sig-issued-details .mt-spacing-large {
+        margin-top: 12px;
+    }
+
+    #template-accountability .accountability-print-page .empty-row td {
+        height: 19px;
+    }
+
+    #template-accountability .accountability-print-page[data-page-role="final"][data-asset-count="1"] .authority-section {
+        margin-top: 18px !important;
+    }
+
+    #template-accountability .accountability-print-page[data-page-role="final"][data-asset-count="1"] .auth-text {
+        margin-bottom: 10px;
+        line-height: 1.34;
+    }
+
+    #template-accountability .accountability-print-page[data-page-role="final"][data-asset-count="1"] .signatures-grid {
+        margin-top: 18px;
+    }
+
+    #template-accountability .accountability-print-page[data-page-role="final"][data-asset-count="1"] .assignee-details {
+        margin-top: 60px;
+    }
+
+    #template-accountability .accountability-print-page[data-page-role="final"][data-asset-count="1"] .assignee-details .sig-issued-details {
+        margin-top: 24px;
+    }
+
+    #template-accountability .accountability-print-page[data-page-role="final"][data-asset-count="1"] .assignee-details .sig-issued-details .mt-spacing-large {
+        margin-top: 24px;
+    }
+
+    #template-accountability .accountability-print-page[data-page-role="final"][data-asset-count="1"] .empty-row td {
+        height: 36px;
+    }
+
+    #template-accountability .accountability-print-page[data-page-role="final"][data-asset-count="2"] .authority-section {
+        margin-top: 15px !important;
+    }
+
+    #template-accountability .accountability-print-page[data-page-role="final"][data-asset-count="2"] .auth-text {
+        margin-bottom: 9px;
+        line-height: 1.36;
+    }
+
+    #template-accountability .accountability-print-page[data-page-role="final"][data-asset-count="2"] .signatures-grid {
+        margin-top: 9px;
+    }
+
+    #template-accountability .accountability-print-page[data-page-role="final"][data-asset-count="2"] .assignee-details {
+        margin-top: 30px;
+    }
+
+    #template-accountability .accountability-print-page[data-page-role="final"][data-asset-count="2"] .assignee-details .sig-issued-details {
+        margin-top: 10px;
+    }
+
+    #template-accountability .accountability-print-page[data-page-role="final"][data-asset-count="2"] .assignee-details .sig-issued-details .mt-spacing-large {
+        margin-top: 14px;
+    }
+
+    #template-accountability .accountability-print-page[data-page-role="final"][data-asset-count="2"] .empty-row td {
+        height: 14px;
+    }
+
+    #template-return .return-print-page,
+    #template-sanitization .sanitization-print-page {
+        display: block;
+        width: 276mm;
+        min-height: 0;
+        max-height: none;
+        padding: 4mm 6mm;
+        zoom: var(--ncs-print-fit-scale);
+        page-break-after: always;
+        break-after: page;
+        page-break-inside: avoid;
+        break-inside: avoid-page;
+    }
+
+    #template-return .return-print-page:last-child,
+    #template-sanitization .sanitization-print-page:last-child {
+        page-break-after: avoid;
+        break-after: avoid;
+    }
+
+    #accountabilityForm[data-asset-count="1"] .authority-section {
+        margin-top: 18px !important;
+    }
+
+    #accountabilityForm[data-asset-count="1"] .auth-text {
+        margin-bottom: 12px;
+        line-height: 1.36;
+    }
+
+    #accountabilityForm[data-asset-count="1"] .signatures-grid {
+        margin-top: 18px;
+    }
+
+    #accountabilityForm[data-asset-count="1"] .assignee-details {
+        margin-top: 60px;
+    }
+
+    #accountabilityForm[data-asset-count="1"] .assignee-details .sig-issued-details {
+        margin-top: 24px;
+    }
+
+    #accountabilityForm[data-asset-count="1"] .assignee-details .sig-issued-details .mt-spacing-large {
+        margin-top: 24px;
+    }
+
+    #accountabilityForm[data-asset-count="1"] .empty-row td {
+        height: 36px;
+    }
+
+    #accountabilityForm[data-asset-count="2"] .authority-section {
+        margin-top: 15px !important;
+    }
+
+    #accountabilityForm[data-asset-count="2"] .auth-text {
+        margin-bottom: 9px;
+        line-height: 1.36;
+    }
+
+    #accountabilityForm[data-asset-count="2"] .signatures-grid {
+        margin-top: 9px;
+    }
+
+    #accountabilityForm[data-asset-count="2"] .assignee-details {
+        margin-top: 30px;
+    }
+
+    #accountabilityForm[data-asset-count="2"] .assignee-details .sig-issued-details {
+        margin-top: 10px;
+    }
+
+    #accountabilityForm[data-asset-count="2"] .assignee-details .sig-issued-details .mt-spacing-large {
+        margin-top: 14px;
+    }
+
+    #accountabilityForm[data-asset-count="2"] .empty-row td {
+        height: 14px;
+    }
+
+    #accountabilityForm[data-print-density="compact"] .info-table td,
+    #template-accountability .accountability-print-page[data-print-density="compact"] .info-table td {
+        padding-top: 4px;
+        padding-bottom: 4px;
+        line-height: 1.12;
+        font-size: 0.9rem;
+    }
+
+    #accountabilityForm[data-print-density="compact"] .details-table th,
+    #accountabilityForm[data-print-density="compact"] .details-table td,
+    #template-accountability .accountability-print-page[data-print-density="compact"] .details-table th,
+    #template-accountability .accountability-print-page[data-print-density="compact"] .details-table td {
+        padding-top: 4px;
+        padding-bottom: 4px;
+        line-height: 1.12;
+        font-size: 0.9rem;
+    }
+
+    #accountabilityForm[data-print-density="compact"] .auth-text,
+    #template-accountability .accountability-print-page[data-print-density="compact"] .auth-text {
+        margin-bottom: 6px;
+        line-height: 1.28;
+    }
+
+    #accountabilityForm[data-print-density="compact"] .signatures-grid,
+    #template-accountability .accountability-print-page[data-print-density="compact"] .signatures-grid {
+        margin-top: 6px;
+    }
+
+    #accountabilityForm[data-print-density="compact"] .assignee-details,
+    #template-accountability .accountability-print-page[data-print-density="compact"] .assignee-details {
+        margin-top: 18px;
+    }
+
+    #accountabilityForm[data-print-density="compact"] .assignee-details .sig-issued-details,
+    #template-accountability .accountability-print-page[data-print-density="compact"] .assignee-details .sig-issued-details {
+        margin-top: 8px;
+    }
+
+    #accountabilityForm[data-print-density="compact"] .assignee-details .sig-issued-details .mt-spacing-large,
+    #template-accountability .accountability-print-page[data-print-density="compact"] .assignee-details .sig-issued-details .mt-spacing-large {
+        margin-top: 10px;
+    }
+
+    #accountabilityForm[data-asset-count="1"] .accountability-print-signature-name,
+    #template-accountability .accountability-print-page[data-page-role="final"][data-asset-count="1"] .accountability-print-signature-name {
+        display: block;
+        margin-top: 14px;
+    }
+
+    #accountabilityForm[data-asset-count="1"] .assignee-details .accountability-print-signature-name,
+    #template-accountability .accountability-print-page[data-page-role="final"][data-asset-count="1"] .assignee-details .accountability-print-signature-name {
+        margin-top: 18px;
+    }
+
+    #accountabilityForm[data-asset-count="1"] .assignee-details .sig-issued-details .accountability-print-signature-name,
+    #template-accountability .accountability-print-page[data-page-role="final"][data-asset-count="1"] .assignee-details .sig-issued-details .accountability-print-signature-name {
+        margin-top: 20px;
+    }
+
+    #accountabilityForm[data-asset-count="1"] .assignee-details .sig-issued-details,
+    #template-accountability .accountability-print-page[data-page-role="final"][data-asset-count="1"] .assignee-details .sig-issued-details {
+        margin-top: 26px;
+    }
+
+    #accountabilityForm[data-asset-count="1"] .sig-pos-input,
+    #template-accountability .accountability-print-page[data-page-role="final"][data-asset-count="1"] .sig-pos-input {
+        margin-bottom: 22px;
+    }
+
+    #accountabilityForm[data-print-density="compact"] .empty-row td,
+    #template-accountability .accountability-print-page[data-print-density="compact"] .empty-row td {
+        height: 8px;
+    }
+
+    #template-test-device-accountability[data-print-visible="true"] {
+        width: 100%;
+    }
+
+    #template-test-device-accountability .printable-form {
+        display: flex;
+        width: 100% !important;
+        max-width: none !important;
+        height: auto;
+        min-height: 0;
+        max-height: none;
+        padding: 4mm 6mm;
+        zoom: var(--ncs-print-fit-scale);
+        page-break-after: auto;
+        break-after: auto;
+        page-break-inside: avoid;
+        break-inside: avoid-page;
+        box-sizing: border-box;
+    }
+
+    #template-test-device-accountability .tda-form-top-row {
+        min-height: 28px;
+        margin-bottom: 2px;
+    }
+
+    #template-test-device-accountability .yondu-logo-img {
+        max-width: 104px;
+    }
+
+    #template-test-device-accountability .form-title-bar {
+        padding: 4px;
+        font-size: 0.92rem;
+    }
+
+    #template-test-device-accountability .info-table td,
+    #template-test-device-accountability .details-table th,
+    #template-test-device-accountability .details-table td {
+        padding: 3px 3px;
+        font-size: 0.78rem;
+    }
+
+    #template-test-device-accountability .empty-row td {
+        height: 14px;
+    }
+
+    #template-test-device-accountability .auth-text {
+        line-height: 1.22;
+        margin-bottom: 8px;
+        padding: 0 6px;
+        font-size: 0.72rem;
+    }
+
+    #template-test-device-accountability .tda-info-table .label,
+    #template-test-device-accountability .tda-info-table .value {
+        font-size: 0.78rem;
+    }
+
+    #template-test-device-accountability .tda-asset-tag-cell {
+        vertical-align: middle;
+    }
+
+    #template-test-device-accountability .tda-asset-tag-list {
+        display: grid;
+        gap: 0.05rem;
+        margin-top: 0.1rem;
+        font-size: 0.68rem;
+        line-height: 1.05;
+        color: #1f2937;
+    }
+
+    #template-test-device-accountability .tda-asset-tag-list[hidden] {
+        display: none !important;
+    }
+
+    #template-test-device-accountability .tda-signatures-grid {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+        gap: 0.65rem;
+        margin-top: 0.55rem;
+        align-items: start;
+    }
+
+    #template-test-device-accountability .tda-signature-column {
+        min-width: 0;
+    }
+
+    #template-test-device-accountability .tda-signature-column:last-child {
+        justify-self: end;
+        width: 100%;
+        max-width: 320px;
+    }
+
+    #template-test-device-accountability .tda-signature-card {
+        min-height: 54px;
+    }
+
+    #template-test-device-accountability .tda-prepared-card {
+        justify-content: flex-end;
+        min-height: auto;
+        padding-top: 0.7rem;
+    }
+
+    #template-test-device-accountability .tda-employee-card {
+        justify-content: flex-start;
+        min-height: auto;
+        width: 100%;
+        padding-top: 0.7rem;
+    }
+
+    #template-test-device-accountability .tda-details-table .editable-textarea {
+        min-height: 34px;
+    }
+
+    #template-test-device-accountability .tda-details-table .combobox-wrapper {
+        min-height: 40px;
+    }
+
+    #template-test-device-accountability .tda-signature-label,
+    #template-test-device-accountability .tda-signature-caption,
+    #template-test-device-accountability .tda-signature-name,
+    #template-test-device-accountability .tda-signature-role {
+        font-size: 0.74rem;
+    }
+
+    #template-test-device-accountability .tda-prepared-card .tda-signature-name {
+        margin-top: 0.9rem;
+    }
+
+    #template-test-device-accountability .tda-prepared-card .tda-signature-role {
+        margin-top: 0.08rem;
+    }
+
+    #template-test-device-accountability .tda-signature-line {
+        width: 100%;
+        max-width: none;
+        min-width: 0;
+        white-space: normal;
+        overflow: visible;
+        text-overflow: clip;
+        overflow-wrap: anywhere;
+        word-break: break-word;
+        line-height: 1.15;
+        font-size: 0.7rem;
+        padding-left: 0;
+        padding-right: 0;
+        box-sizing: border-box;
+        margin-top: 0.9rem;
+        margin-bottom: 0.08rem;
+    }
+
+    #template-test-device-accountability .tda-signature-caption {
+        padding-top: 0;
+    }
+
+    #template-test-device-accountability .authority-section {
+        margin-top: 10px !important;
+    }
+
+    #template-test-device-accountability .auth-header {
+        margin-bottom: 8px;
+        padding: 4px;
+        font-size: 0.82rem;
+    }
+
+    #template-return .return-signatures-container {
+        flex: 1 1 auto;
+        min-height: 0;
+    }
+
+    #template-return .form-footer {
+        margin-top: 5px !important;
+    }
+
+    .return-signatures-container {
+        min-height: 70px;
+        /* Compress from 100px */
+    }
+
+    .sanitization-inner {
+        padding: 5px;
+        /* Compress padding */
+    }
+
+    .sig-section.main-returnee {
+        margin-bottom: 5px;
+        line-height: 1.4;
+    }
+
+    /* Force background colors to print */
+    * {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+
+    /* Make inputs look like plain text when printed */
+    .editable-input,
+    .editable-textarea {
+        border: none !important;
+        background: transparent !important;
+    }
+
+    .combobox-toggle,
+    .combobox-options {
+        display: none !important;
+    }
+
+    #template-return .details-table:not(.ncs-return-table) th:nth-child(1),
+    #template-sanitization .details-table:not(.ncs-sanitization-table) th:nth-child(1) {
+        width: 9% !important;
+    }
+
+    #template-return .details-table:not(.ncs-return-table) th:nth-child(2),
+    #template-sanitization .details-table:not(.ncs-sanitization-table) th:nth-child(2) {
+        width: 31% !important;
+    }
+
+    #template-return .details-table:not(.ncs-return-table) th:nth-child(3),
+    #template-sanitization .details-table:not(.ncs-sanitization-table) th:nth-child(3) {
+        width: 14% !important;
+    }
+
+    #template-return .details-table:not(.ncs-return-table) th:nth-child(4),
+    #template-sanitization .details-table:not(.ncs-sanitization-table) th:nth-child(4) {
+        width: 15% !important;
+    }
+
+    #template-return .details-table:not(.ncs-return-table) th:nth-child(5),
+    #template-sanitization .details-table:not(.ncs-sanitization-table) th:nth-child(5) {
+        width: 31% !important;
+    }
+
+    #template-return .combobox-wrapper,
+    #template-sanitization .combobox-wrapper {
+        display: block;
+    }
+
+    #template-return .combobox-input,
+    #template-return .combobox-wrapper textarea,
+    #template-sanitization .combobox-input,
+    #template-sanitization .combobox-wrapper textarea {
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+    }
+
+    .grey-select {
+        border: none !important;
+        background: transparent !important;
+        -webkit-appearance: none !important;
+        -moz-appearance: none !important;
+        appearance: none !important;
+        font-size: 0.85rem;
+        padding: 0 !important;
+    }
+
+}
+
+@keyframes themeFlowFloat {
+    from {
+        transform: translate3d(-4%, -3%, 0) scale(1);
+    }
+
+    to {
+        transform: translate3d(6%, 7%, 0) scale(1.12);
+    }
+}
+
+@keyframes themeFlowSpin {
+    from {
+        transform: rotate(0deg) scale(1.02);
+    }
+
+    to {
+        transform: rotate(360deg) scale(1.1);
+    }
+}
+
+@keyframes themeMeshPulse {
+    0%,
+    100% {
+        transform: scale(1) translate3d(-2%, 0, 0);
+        opacity: 0.5;
+    }
+
+    50% {
+        transform: scale(1.18) translate3d(5%, -5%, 0);
+        opacity: 0.82;
+    }
+}
+
+@keyframes themeMeshOrbit {
+    0% {
+        transform: translate3d(-5%, 2%, 0) rotate(0deg);
+    }
+
+    50% {
+        transform: translate3d(4%, -4%, 0) rotate(120deg);
+    }
+
+    100% {
+        transform: translate3d(6%, 5%, 0) rotate(240deg);
+    }
+}
+
+@keyframes themeWindSweep {
+    from {
+        transform: translate3d(-12%, 2%, 0) skewX(-7deg) scale(1.02);
+    }
+
+    to {
+        transform: translate3d(12%, -7%, 0) skewX(8deg) scale(1.08);
+    }
+}
+
+@keyframes themeWindLift {
+    from {
+        transform: translate3d(8%, 12%, 0) rotate(-8deg);
+    }
+
+    to {
+        transform: translate3d(-8%, -12%, 0) rotate(7deg);
+    }
+}
+
+@keyframes themeBlockyShift {
+    from {
+        transform: translate3d(-6%, -4%, 0) scale(1);
+    }
+
+    to {
+        transform: translate3d(8%, 6%, 0) scale(1.08);
+    }
+}
+
+@keyframes themeBlockyShiftAlt {
+    from {
+        transform: translate3d(4%, -6%, 0) scale(1.04);
+    }
+
+    to {
+        transform: translate3d(-7%, 8%, 0) scale(1.12);
+    }
+}
+
+@keyframes themeStrobeLayerA {
+    0%,
+    100% {
+        opacity: 0.34;
+    }
+
+    45% {
+        opacity: 0.72;
+    }
+
+    55% {
+        opacity: 0.22;
+    }
+}
+
+@keyframes themeStrobeLayerB {
+    0%,
+    100% {
+        opacity: 0.18;
+    }
+
+    50% {
+        opacity: 0.52;
+    }
+}
+
+@media print {
+    .ncs-hidden-meta {
+        display: none !important;
+    }
+
+    .printable-form {
+        padding: 4mm 6mm;
+    }
+
+    .ncs-logo-img {
+        max-width: 112px;
+    }
+
+    .ncs-control-number .cn-label-box,
+    .ncs-control-number .cn-value-box,
+    .ncs-form-title,
+    .ncs-authority-section .auth-header,
+    .ncs-signature-panel .sig-title-bar,
+    .ncs-divider-bar {
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+
+    .ncs-form-title {
+        font-size: 0.86rem;
+        padding: 0.34rem 0.5rem;
+    }
+
+    .ncs-info-table td,
+    .ncs-details-table th,
+    .ncs-details-table td {
+        font-size: 0.72rem;
+        padding: 0.18rem 0.22rem;
+    }
+
+    .ncs-authority-section {
+        margin-top: 10px;
+    }
+
+    .ncs-authority-section .auth-header {
+        padding: 0.4rem 0.45rem;
+        font-size: 0.8rem;
+    }
+
+    .ncs-authority-section .auth-text {
+        padding: 1rem 1.1rem;
+        font-size: 0.71rem;
+        line-height: 1.35;
+    }
+
+    .ncs-accountability-signatures {
+        display: grid !important;
+        grid-template-columns: repeat(3, minmax(0, 24.5%));
+        justify-content: space-between;
+        align-items: start;
+        gap: 1.55rem;
+        padding: 0.7rem 0.3rem 0.4rem;
+    }
+
+    .ncs-accountability-signatures > .ncs-signature-column {
+        display: flex;
+        flex-direction: column;
+        gap: 0.45rem;
+    }
+
+    .ncs-accountability-signatures > .sig-column,
+    .ncs-accountability-signatures > .tda-signature-column {
+        display: block !important;
+        width: auto !important;
+        max-width: none !important;
+        min-width: 0 !important;
+        font-size: inherit !important;
+    }
+
+    .ncs-accountability-signatures > .sig-column.right,
+    .ncs-accountability-signatures > .tda-signature-column.right {
+        text-align: initial !important;
+    }
+
+    .ncs-accountability-signatures > .sig-column.right .sig-title-bar,
+    .ncs-accountability-signatures > .tda-signature-column.right .sig-title-bar {
+        width: 100% !important;
+        margin-left: 0 !important;
+    }
+
+    .ncs-signature-panel {
+        width: 100%;
+    }
+
+    .ncs-accountability-signatures .ncs-signature-panel {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .ncs-signature-panel .sig-title-bar {
+        font-size: 0.7rem;
+        padding: 0.2rem 0.3rem;
+        line-height: 1.05;
+        text-align: center;
+        white-space: normal;
+    }
+
+    .ncs-signature-blank {
+        min-height: 4.5rem;
+    }
+
+    .ncs-accountability-signatures .ncs-signature-blank {
+        min-height: 4.7rem;
+        flex: 0 0 4.7rem;
+    }
+
+    .ncs-signature-name-row,
+    .ncs-signature-role-row,
+    .ncs-signature-date-row,
+    .ncs-pickup-row {
+        min-height: 1.22rem;
+        font-size: 0.68rem;
+    }
+
+    .ncs-signature-name-row,
+    .ncs-signature-role-row {
+        padding: 0.04rem 0.22rem;
+        white-space: normal;
+        align-items: center;
+    }
+
+    .ncs-signature-name-row {
+        display: grid;
+        place-items: center;
+        text-align: center;
+        padding-top: 0.08rem;
+        padding-bottom: 0.08rem;
+    }
+
+    .ncs-accountability-signatures .ncs-signature-name-row {
+        min-height: 1.05rem;
+        flex: 0 0 1.05rem;
+    }
+
+    .ncs-accountability-signatures .ncs-signature-role-row {
+        min-height: 0.95rem;
+        flex: 0 0 0.95rem;
+    }
+
+    .ncs-signature-date-row,
+    .ncs-pickup-row {
+        grid-template-columns: 82px 1fr;
+    }
+
+    .ncs-accountability-signatures .ncs-signature-panel:first-child .ncs-signature-date-row,
+    .ncs-accountability-signatures .ncs-signature-panel:first-child .ncs-pickup-row {
+        grid-template-columns: 120px minmax(0, 1fr);
+    }
+
+    .ncs-accountability-signatures .ncs-signature-date-row {
+        min-height: 1.08rem;
+        flex: 0 0 1.08rem;
+    }
+
+    #template-accountability .ncs-accountability-signatures .ncs-signature-date-label,
+    #template-accountability .ncs-accountability-signatures .ncs-signature-date-cell,
+    #template-accountability .accountability-print-page .ncs-accountability-signatures .ncs-signature-date-label,
+    #template-accountability .accountability-print-page .ncs-accountability-signatures .ncs-signature-date-cell {
+        min-height: 1.08rem;
+    }
+
+    .ncs-signature-input,
+    .ncs-signature-static {
+        margin: 0;
+        padding: 0;
+        font-size: 0.67rem;
+        line-height: 1.08;
+    }
+
+    .ncs-signature-static {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        min-height: 100%;
+    }
+
+    .ncs-signature-textarea {
+        min-height: 1.28rem;
+    }
+
+    .ncs-signature-textarea.auto-resize {
+        max-height: 100%;
+    }
+
+    .ncs-accountability-signatures .ncs-signature-role-row .ncs-signature-input,
+    .ncs-accountability-signatures .ncs-signature-role-row .ncs-signature-static {
+        font-size: 0.64rem;
+        line-height: 1.06;
+    }
+
+    .ncs-accountability-signatures .ncs-approved-details {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .ncs-accountability-signatures .sig-details,
+    .ncs-accountability-signatures .sig-issued,
+    .ncs-accountability-signatures .assignee-details,
+    .ncs-accountability-signatures .sig-issued-details,
+    #template-accountability #accountabilityApprovedByDetails:not([hidden]),
+    #template-accountability .accountability-print-page .sig-details,
+    #template-accountability .accountability-print-page .sig-details:has(.accountability-print-signature-name),
+    #template-accountability .accountability-print-page .assignee-details,
+    #template-accountability .accountability-print-page .assignee-details .sig-issued-details {
+        margin-top: 0 !important;
+    }
+
+    .ncs-accountability-signatures .sig-name-input,
+    .ncs-accountability-signatures .sig-pos-input,
+    .ncs-accountability-signatures .approved-signature-name,
+    .ncs-accountability-signatures .approved-signature-role,
+    .ncs-accountability-signatures .ncs-signature-static {
+        margin-bottom: 0 !important;
+        padding: 0 !important;
+    }
+
+    .ncs-pickup-row {
+        width: 100%;
+    }
+
+    .ncs-pickup-row-standalone {
+        margin-top: 0.18rem;
+        grid-template-columns: 120px minmax(0, 1fr);
+    }
+
+    .ncs-pickup-row-standalone .ncs-inline-title {
+        background: var(--ncs-sky);
+        color: #fff;
+        border: 1px solid var(--ncs-border);
+        border-right: 0;
+        min-height: 1.42rem;
+    }
+
+    .ncs-pickup-row-standalone .ncs-pickup-input {
+        border: 1px solid var(--ncs-border);
+        border-left: 0;
+        justify-content: center;
+        text-align: center;
+        padding: 0 0.35rem;
+    }
+
+    .ncs-accountability-signatures .ncs-signature-panel:first-child .ncs-pickup-row {
+        margin-top: 0;
+    }
+
+    #template-accountability #accountabilityForm:is([data-asset-count="0"], [data-asset-count="1"]) .details-table th,
+    #template-accountability #accountabilityForm:is([data-asset-count="0"], [data-asset-count="1"]) .details-table td {
+        padding-top: 3px;
+        padding-bottom: 3px;
+    }
+
+    #template-accountability #accountabilityForm:is([data-asset-count="0"], [data-asset-count="1"]) .empty-row td {
+        height: 9px;
+    }
+
+    #template-accountability #accountabilityForm:is([data-asset-count="0"], [data-asset-count="1"]) .ncs-authority-section {
+        margin-top: 8px !important;
+    }
+
+    #template-accountability #accountabilityForm:is([data-asset-count="0"], [data-asset-count="1"]) .ncs-authority-section .auth-text {
+        padding: 0.56rem 1.1rem;
+        line-height: 1.24;
+    }
+
+    #template-accountability #accountabilityForm:is([data-asset-count="0"], [data-asset-count="1"]) .ncs-accountability-signatures {
+        margin-top: 0;
+        padding-top: 0.45rem;
+        padding-bottom: 0.28rem;
+    }
+
+    #template-accountability #accountabilityForm:is([data-asset-count="0"], [data-asset-count="1"]) .ncs-accountability-signatures .ncs-signature-blank {
+        min-height: 4rem;
+        flex-basis: 4rem;
+    }
+
+    #template-accountability #accountabilityForm:is([data-asset-count="0"], [data-asset-count="1"]) .ncs-accountability-signatures .ncs-signature-name-row {
+        min-height: 1.28rem;
+        flex-basis: 1.28rem;
+    }
+
+    #template-accountability #accountabilityForm:is([data-asset-count="0"], [data-asset-count="1"]) .ncs-accountability-signatures .ncs-signature-role-row {
+        min-height: 1.12rem;
+        flex-basis: 1.12rem;
+    }
+
+    #template-accountability #accountabilityForm:is([data-asset-count="0"], [data-asset-count="1"]) .ncs-accountability-signatures .ncs-signature-date-row,
+    #template-accountability #accountabilityForm:is([data-asset-count="0"], [data-asset-count="1"]) .ncs-accountability-signatures .ncs-pickup-row {
+        min-height: 1.08rem;
+        flex-basis: 1.08rem;
+    }
+
+    .ncs-pickup-row .ncs-inline-title {
+        width: 100%;
+        min-height: 1.42rem;
+        padding: 0.08rem 0.2rem;
+        border: 1px solid var(--ncs-border);
+        border-right: 0;
+    }
+
+    .ncs-pickup-input {
+        min-height: 1.42rem;
+    }
+
+    .ncs-pickup-input .custom-date-wrapper,
+    .ncs-signature-date-cell .custom-date-wrapper {
+        width: 100%;
+        max-width: 100%;
+        display: block;
+        overflow: hidden;
+    }
+
+    .ncs-pickup-input .inline-date-input,
+    .ncs-signature-date-cell .inline-date-input {
+        width: 100% !important;
+        max-width: 100%;
+        box-sizing: border-box;
+        padding: 0 0.08rem;
+    }
+
+    .ncs-signature-panel-small .ncs-signature-blank {
+        min-height: 3.15rem;
+    }
+
+    .ncs-divider-bar {
+        height: 1.2rem;
+        margin-top: 0.75rem;
+    }
+
+    .ncs-affirmation-box {
+        padding: 1rem 0.85rem;
+        font-size: 0.69rem;
+    }
+
+    .ncs-condition-options {
+        gap: 0.6rem;
+        padding-top: 0.18rem;
+    }
+
+    .ncs-condition-option {
+        grid-template-columns: 14px 1fr;
+        gap: 0.22rem;
+        font-size: 0.67rem;
+        min-height: 1.45rem;
+        line-height: 1.05;
+    }
+
+    .ncs-condition-flag {
+        width: 0.56rem;
+        height: 0.56rem;
+    }
+
+    .ncs-condition-remarks-text {
+        padding: 0.12rem 0.2rem;
+        font-size: 0.68rem;
+        line-height: 1.05;
+    }
+
+    #template-return .ncs-condition-remarks,
+    #template-sanitization .ncs-condition-remarks {
+        vertical-align: top;
+    }
+
+    .ncs-san-grid-top {
+        grid-template-columns: repeat(3, minmax(10rem, 1fr));
+    }
+
+    .ncs-san-grid-bottom {
+        grid-template-columns: repeat(2, minmax(13rem, 15rem));
+        justify-content: center;
+    }
+
+    .ncs-return-table th:nth-child(1) {
+        width: 9% !important;
+    }
+
+    .ncs-return-table th:nth-child(2) {
+        width: 23% !important;
+    }
+
+    .ncs-return-table th:nth-child(3) {
+        width: 16% !important;
+    }
+
+    .ncs-return-table th:nth-child(4) {
+        width: 17% !important;
+    }
+
+    .ncs-return-table th:nth-child(5) {
+        width: 18% !important;
+    }
+
+    .ncs-return-table th:nth-child(6) {
+        width: 17% !important;
+    }
+
+    .ncs-return-affirmation {
+        padding: 1rem 0.85rem;
+    }
+
+    .ncs-return-signatures {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 0.7rem;
+        align-items: start;
+    }
+
+    .ncs-return-signature-panel .ncs-signature-blank {
+        min-height: 3.45rem;
+    }
+
+    .ncs-return-signature-panel .ncs-signature-name-row,
+    .ncs-return-signature-panel .ncs-signature-role-row,
+    .ncs-return-signature-panel .ncs-signature-date-row {
+        min-height: 1.02rem;
+    }
+
+    .ncs-return-signature-panel .ncs-signature-role-row {
+        min-height: 1.08rem;
+    }
+
+    .ncs-return-signature-panel .ncs-signature-textarea {
+        min-height: 1rem;
+        line-height: 1.04;
+    }
+
+    .ncs-return-signature-panel:first-child .ncs-signature-date-row {
+        grid-template-columns: 96px 1fr;
+    }
+
+    .ncs-return-mobile-row {
+        grid-template-columns: 96px 1fr;
+        border-bottom: 1px solid var(--ncs-border);
+    }
+
+    .ncs-return-signature-panel .sig-name-input,
+    .ncs-return-signature-panel .sig-pos-input {
+        margin-bottom: 0 !important;
+        padding: 0 !important;
+    }
+
+    #template-test-device-accountability .tda-signatures-grid.ncs-accountability-signatures {
+        grid-template-columns: repeat(3, minmax(0, 24.5%)) !important;
+        justify-content: space-between !important;
+        align-items: start !important;
+    }
+
+    #template-test-device-accountability .tda-signature-column:last-child {
+        justify-self: auto !important;
+        width: auto !important;
+        max-width: none !important;
+    }
+
+    #template-test-device-accountability .ncs-details-table th:nth-child(1) {
+        width: 6% !important;
+    }
+
+    #template-test-device-accountability .ncs-details-table th:nth-child(2) {
+        width: 10% !important;
+    }
+
+    #template-test-device-accountability .ncs-details-table th:nth-child(3) {
+        width: 12% !important;
+    }
+
+    #template-test-device-accountability .ncs-details-table th:nth-child(4) {
+        width: 32% !important;
+    }
+
+    #template-test-device-accountability .ncs-details-table th:nth-child(5) {
+        width: 16% !important;
+    }
+
+    #template-test-device-accountability .ncs-details-table th:nth-child(6) {
+        width: 11% !important;
+    }
+
+    #template-test-device-accountability .ncs-details-table th:nth-child(7) {
+        width: 13% !important;
+    }
+
+    #template-sanitization .ncs-sanitization-table th:nth-child(1) {
+        width: 8% !important;
+    }
+
+    #template-sanitization .ncs-sanitization-table th:nth-child(2) {
+        width: 22% !important;
+    }
+
+    #template-sanitization .ncs-sanitization-table th:nth-child(3) {
+        width: 15% !important;
+    }
+
+    #template-sanitization .ncs-sanitization-table th:nth-child(4) {
+        width: 16% !important;
+    }
+
+    #template-sanitization .ncs-sanitization-table th:nth-child(5) {
+        width: 16% !important;
+    }
+
+    #template-sanitization .ncs-sanitization-table th:nth-child(6) {
+        width: 23% !important;
+    }
+
+    #template-return #returnForm,
+    #template-return .return-print-page {
+        width: 276mm;
+        min-height: 173mm;
+        max-height: none;
+        margin: 0 auto;
+        padding: 3.5mm 6mm;
+    }
+
+    #template-sanitization #sanitizationForm,
+    #template-sanitization .sanitization-print-page {
+        width: 276mm;
+        min-height: 173mm;
+        max-height: none;
+        margin: 0 auto;
+        padding: 3.5mm 6mm;
+    }
+
+    #template-return .ncs-divider-bar,
+    #template-sanitization .ncs-divider-bar {
+        height: 1.18rem !important;
+        min-height: 1.18rem !important;
+        margin-top: 0.62rem;
+        background: var(--ncs-navy) !important;
+    }
+
+    #template-return .ncs-affirmation-box,
+    #template-sanitization .ncs-affirmation-box {
+        padding: 1.15rem 1.1rem;
+        font-size: 0.62rem;
+        line-height: 1.25;
+    }
+
+    #template-return #returnForm .form-top-row,
+    #template-return .return-print-page .form-top-row {
+        min-height: 3.05rem;
+        align-items: center;
+    }
+
+    #template-return #returnForm .ncs-logo-img,
+    #template-return .return-print-page .ncs-logo-img {
+        max-width: 112px;
+    }
+
+    #template-return #returnForm .ncs-form-title,
+    #template-return .return-print-page .ncs-form-title {
+        padding: 0.28rem 0.5rem;
+        font-size: 0.68rem;
+    }
+
+    #template-return #returnForm .ncs-info-table td,
+    #template-return .return-print-page .ncs-info-table td {
+        height: 1.6rem;
+        padding: 0.08rem 0.18rem;
+        font-size: 0.6rem;
+        line-height: 1.08;
+    }
+
+    #template-return #returnForm .ncs-details-table th,
+    #template-return #returnForm .ncs-details-table td,
+    #template-return .return-print-page .ncs-details-table th,
+    #template-return .return-print-page .ncs-details-table td {
+        height: 1.52rem;
+        padding: 0.08rem 0.16rem;
+        font-size: 0.6rem;
+        line-height: 1.08;
+    }
+
+    #template-return #returnForm .ncs-condition-option,
+    #template-return .return-print-page .ncs-condition-option {
+        grid-template-columns: 13px 1fr;
+        min-height: 1.1rem;
+        gap: 0.18rem;
+        font-size: 0.56rem;
+        line-height: 1.05;
+    }
+
+    #template-return #returnForm .ncs-condition-flag,
+    #template-return .return-print-page .ncs-condition-flag {
+        width: 0.5rem;
+        height: 0.5rem;
+    }
+
+    #template-return #returnForm .ncs-condition-remarks-text,
+    #template-return .return-print-page .ncs-condition-remarks-text {
+        font-size: 0.56rem;
+        line-height: 1.05;
+        padding: 0.08rem 0.15rem;
+    }
+
+    #template-return .ncs-return-signatures {
+        width: 86%;
+        max-width: none;
+        grid-template-columns: 36% 39%;
+        justify-content: space-between;
+        gap: 0;
+        margin-top: 1.6rem;
+    }
+
+    #template-return .ncs-return-signature-panel .ncs-signature-blank {
+        min-height: 4.85rem;
+    }
+
+    #template-return .ncs-return-signature-panel .ncs-signature-name-row,
+    #template-return .ncs-return-signature-panel .ncs-signature-role-row,
+    #template-return .ncs-return-signature-panel .ncs-signature-date-row {
+        min-height: 0.82rem;
+        font-size: 0.56rem;
+        line-height: 1.04;
+    }
+
+    #template-return .ncs-return-signature-panel .ncs-signature-role-row {
+        min-height: 0.82rem;
+    }
+
+    #template-return .ncs-return-signature-panel .ncs-signature-date-label,
+    #template-return .ncs-return-signature-panel .ncs-signature-date-cell {
+        min-height: 0.8rem;
+    }
+
+    #template-return .ncs-return-signature-panel .sig-title-bar {
+        font-size: 0.58rem;
+        padding: 0.12rem 0.25rem;
+        line-height: 1.05;
+    }
+
+    #template-sanitization .ncs-san-signatures {
+        margin-top: 1rem;
+        width: 90%;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    #template-sanitization .ncs-san-grid-top,
+    #template-sanitization .ncs-san-grid-bottom {
+        align-items: start;
+        column-gap: 1.55rem;
+        break-inside: avoid-page;
+        page-break-inside: avoid;
+    }
+
+    #template-sanitization .ncs-san-grid-top {
+        grid-template-columns: repeat(3, minmax(11rem, 1fr));
+    }
+
+    #template-sanitization .ncs-san-grid-bottom {
+        width: 68%;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        justify-content: center;
+        gap: 1.55rem;
+        margin: 1.6rem auto 0;
+    }
+
+    #template-sanitization .ncs-signature-panel-small {
+        box-sizing: border-box;
+    }
+
+    #template-sanitization .ncs-signature-panel-small .ncs-signature-blank {
+        min-height: 5.45rem;
+    }
+
+    #template-sanitization .ncs-signature-panel-small .sig-title-bar {
+        font-size: 0.56rem;
+        padding: 0.12rem 0.22rem;
+        line-height: 1.05;
+    }
+
+    #template-sanitization .ncs-signature-panel-small .ncs-signature-name-row,
+    #template-sanitization .ncs-signature-panel-small .ncs-signature-role-row,
+    #template-sanitization .ncs-signature-panel-small .ncs-signature-date-row {
+        min-height: 0.8rem;
+        font-size: 0.57rem;
+        line-height: 1.06;
+    }
+
+    #template-sanitization .ncs-signature-panel-small .ncs-signature-date-label,
+    #template-sanitization .ncs-signature-panel-small .ncs-signature-date-cell {
+        min-height: 1.55rem;
+    }
+
+    #template-sanitization #sanitizationForm .form-top-row,
+    #template-sanitization .sanitization-print-page .form-top-row {
+        min-height: 2.5rem;
+        border: 0;
+        align-items: center;
+        margin: 0;
+    }
+
+    #template-sanitization #sanitizationForm .form-top-row::before,
+    #template-sanitization .sanitization-print-page .form-top-row::before {
+        content: none;
+    }
+
+    #template-sanitization #sanitizationForm .ncs-logo-img,
+    #template-sanitization .sanitization-print-page .ncs-logo-img {
+        width: auto;
+        max-width: 112px;
+        height: auto;
+        margin: 0;
+        padding: 0;
+        object-fit: contain;
+        background: transparent;
+        border-right: 0;
+    }
+
+    #template-sanitization #sanitizationForm .ncs-form-title,
+    #template-sanitization .sanitization-print-page .ncs-form-title {
+        margin-top: 0;
+        padding: 0.28rem 0.5rem;
+        font-size: 0.68rem;
+        line-height: 1.05;
+    }
+
+    #template-sanitization #sanitizationForm .ncs-info-table td,
+    #template-sanitization .sanitization-print-page .ncs-info-table td {
+        height: 1.6rem;
+        padding: 0.08rem 0.18rem;
+        font-size: 0.6rem;
+        line-height: 1.08;
+    }
+
+    #template-sanitization #sanitizationForm .ncs-details-table th,
+    #template-sanitization #sanitizationForm .ncs-details-table td,
+    #template-sanitization .sanitization-print-page .ncs-details-table th,
+    #template-sanitization .sanitization-print-page .ncs-details-table td {
+        height: 1.35rem;
+        padding: 0.05rem 0.14rem;
+        font-size: 0.58rem;
+        line-height: 1.04;
+    }
+
+    #template-sanitization #sanitizationForm .ncs-affirmation-box,
+    #template-sanitization .sanitization-print-page .ncs-affirmation-box {
+        padding-top: 0.3rem;
+        padding-bottom: 0.3rem;
+        font-size: 0.62rem;
+        line-height: 1.25;
+    }
+
+    #template-sanitization #sanitizationForm .ncs-condition-option,
+    #template-sanitization .sanitization-print-page .ncs-condition-option {
+        grid-template-columns: 13px 1fr;
+        gap: 0.18rem;
+        min-height: 1.1rem;
+        font-size: 0.56rem;
+        line-height: 1.05;
+    }
+
+    #template-sanitization #sanitizationForm .ncs-condition-flag,
+    #template-sanitization .sanitization-print-page .ncs-condition-flag {
+        width: 0.5rem;
+        height: 0.5rem;
+    }
+
+    #template-sanitization #sanitizationForm .ncs-condition-remarks-text,
+    #template-sanitization .sanitization-print-page .ncs-condition-remarks-text {
+        font-size: 0.56rem;
+        line-height: 1.05;
+        padding: 0.08rem 0.15rem;
+    }
+
+    #template-sanitization #sanitizationForm[data-print-asset-count="6"] .ncs-details-table th,
+    #template-sanitization #sanitizationForm[data-print-asset-count="6"] .ncs-details-table td,
+    #template-sanitization .sanitization-print-page[data-print-asset-count="6"] .ncs-details-table th,
+    #template-sanitization .sanitization-print-page[data-print-asset-count="6"] .ncs-details-table td {
+        height: 1.2rem;
+        padding: 0.03rem 0.1rem;
+        font-size: 0.55rem;
+        line-height: 1;
+    }
+
+    #template-sanitization #sanitizationForm[data-print-asset-count="6"] .ncs-signature-panel-small .ncs-signature-blank,
+    #template-sanitization .sanitization-print-page[data-print-asset-count="6"] .ncs-signature-panel-small .ncs-signature-blank {
+        min-height: 1.75rem;
+    }
+}
+
+/* Adaptive accountability pagination. Keep this block last so the generated
+   page contract is not weakened by the legacy print-density rules above. */
+@media print {
+    #template-accountability #accountabilityForm {
+        overflow: visible;
+        break-inside: avoid-page;
+        page-break-inside: avoid;
+    }
+
+    #template-accountability .accountability-print-page {
+        display: flex;
+        flex-direction: column;
+        width: 280mm;
+        min-height: 170mm;
+        zoom: 1;
+        box-sizing: border-box;
+        overflow: visible;
+        break-inside: avoid-page;
+        page-break-inside: avoid;
+        break-after: auto;
+        page-break-after: auto;
+    }
+
+    #template-accountability .accountability-print-page + .accountability-print-page {
+        break-before: page;
+        page-break-before: always;
+    }
+
+    #template-accountability .accountability-print-page .details-table tr,
+    #template-accountability .accountability-print-page .authority-section,
+    #template-accountability .accountability-print-page .ncs-accountability-signatures {
+        break-inside: avoid-page;
+        page-break-inside: avoid;
+    }
+
+    #template-accountability .accountability-page-meta {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.75rem;
+        min-height: 1.45rem;
+        padding: 0.18rem 0.35rem;
+        border: 1px solid #94a3b8;
+        border-top: 0;
+        background: #eef5fb;
+        color: var(--ncs-navy);
+        font-size: 0.62rem;
+        font-weight: 700;
+        line-height: 1.1;
+        text-transform: uppercase;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+
+    #template-accountability .accountability-page-range {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    #template-accountability .accountability-page-range span {
+        color: #334155;
+        font-weight: 600;
+        letter-spacing: 0.02em;
+    }
+
+    #template-accountability .accountability-page-badge {
+        margin: 0;
+        color: var(--ncs-navy);
+        font-size: inherit;
+        letter-spacing: 0.05em;
+        white-space: nowrap;
+    }
+
+    #template-accountability .accountability-print-page .accountability-page-meta + .info-table {
+        margin-top: 0.28rem;
+    }
+
+    #template-accountability .accountability-print-page[data-page-role="continued"] .empty-row td {
+        height: 1.25rem;
+    }
+
+    #template-accountability .accountability-continuation-note {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        margin-top: auto;
+        padding: 0.48rem 0.65rem;
+        border: 1px solid #94a3b8;
+        border-left: 5px solid var(--ncs-sky);
+        background: #f8fafc;
+        color: var(--ncs-navy);
+        font-size: 0.66rem;
+        line-height: 1.15;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+
+    #template-accountability .accountability-continuation-title {
+        font-weight: 800;
+        letter-spacing: 0.025em;
+        text-transform: uppercase;
+    }
+
+    #template-accountability .accountability-continuation-count {
+        color: #475569;
+        font-weight: 700;
+        white-space: nowrap;
+    }
+
+    #template-accountability .accountability-print-page[data-page-role="final"]:not([data-total-pages="1"]) .authority-section {
+        margin-top: auto !important;
+    }
+
+    #template-accountability #accountabilityForm[data-print-density="compact"][data-asset-count="4"] .empty-row,
+    #template-accountability #accountabilityForm[data-print-density="compact"][data-asset-count="5"] .empty-row,
+    #template-accountability #accountabilityForm[data-print-density="compact"][data-asset-count="6"] .empty-row {
+        display: none;
+    }
+
+    #template-accountability #accountabilityForm[data-print-density="compact"] .ncs-info-table td,
+    #template-accountability .accountability-print-page[data-print-density="compact"] .ncs-info-table td {
+        height: 1.34rem;
+        padding: 0.08rem 0.18rem;
+        font-size: 0.65rem;
+        line-height: 1.08;
+    }
+
+    #template-accountability #accountabilityForm[data-print-density="compact"] .ncs-details-table th,
+    #template-accountability #accountabilityForm[data-print-density="compact"] .ncs-details-table td,
+    #template-accountability .accountability-print-page[data-print-density="compact"] .ncs-details-table th,
+    #template-accountability .accountability-print-page[data-print-density="compact"] .ncs-details-table td {
+        height: 1.12rem;
+        padding: 0.07rem 0.14rem;
+        font-size: 0.63rem;
+        line-height: 1.06;
+    }
+
+    #template-accountability #accountabilityForm[data-print-density="compact"] .ncs-authority-section .auth-text,
+    #template-accountability .accountability-print-page[data-print-density="compact"] .ncs-authority-section .auth-text {
+        margin-bottom: 0.3rem;
+        padding: 0.55rem 1rem;
+        font-size: 0.64rem;
+        line-height: 1.2;
+    }
+
+    #template-accountability #accountabilityForm[data-print-density="compact"] .ncs-accountability-signatures,
+    #template-accountability .accountability-print-page[data-print-density="compact"] .ncs-accountability-signatures {
+        margin-top: 0;
+        padding-top: 0.42rem;
+        padding-bottom: 0.24rem;
+    }
+
+    #template-accountability #accountabilityForm[data-print-density="compact"] .ncs-accountability-signatures .ncs-signature-blank,
+    #template-accountability .accountability-print-page[data-print-density="compact"] .ncs-accountability-signatures .ncs-signature-blank {
+        min-height: 3.7rem;
+        flex-basis: 3.7rem;
+    }
+
+    #template-accountability #accountabilityForm[data-print-density="compact"] .ncs-accountability-signatures .ncs-signature-name-row,
+    #template-accountability .accountability-print-page[data-print-density="compact"] .ncs-accountability-signatures .ncs-signature-name-row {
+        min-height: 1rem;
+        flex-basis: 1rem;
+    }
+
+    #template-accountability #accountabilityForm[data-print-density="compact"] .ncs-accountability-signatures .ncs-signature-role-row,
+    #template-accountability .accountability-print-page[data-print-density="compact"] .ncs-accountability-signatures .ncs-signature-role-row {
+        min-height: 0.92rem;
+        flex-basis: 0.92rem;
+    }
+
+    #template-accountability .accountability-print-page[data-page-role="continued"][data-print-density="compact"] .ncs-details-table .empty-row td {
+        height: 1.25rem;
+    }
+
+    /* Keep the four-device Test Device form together on one print sheet. */
+    #template-test-device-accountability .printable-form {
+        height: auto !important;
+        min-height: 0 !important;
+        max-height: none !important;
+        overflow: hidden !important;
+        page-break-inside: avoid !important;
+        break-inside: avoid-page !important;
+    }
+
+    #template-test-device-accountability .tda-device-empty-row td {
+        height: 8px !important;
+    }
+
+    #template-test-device-accountability .authority-section {
+        margin-top: 0 !important;
+        padding-top: 0 !important;
+        page-break-inside: avoid !important;
+        break-inside: avoid-page !important;
+    }
+
+    #template-test-device-accountability .authority-section .auth-header {
+        margin-bottom: 4px !important;
+    }
+
+    #template-test-device-accountability .authority-section .auth-text {
+        margin-bottom: 4px !important;
+    }
+
+    #template-test-device-accountability .tda-signatures-grid {
+        margin-top: 0 !important;
+        padding-top: 0.3rem !important;
+        padding-bottom: 0.15rem !important;
+        page-break-inside: avoid !important;
+        break-inside: avoid-page !important;
+    }
+
+    #template-test-device-accountability .tda-signature-column,
+    #template-test-device-accountability .tda-signature-column .ncs-signature-panel {
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+    }
+
+    #template-test-device-accountability .tda-signatures-grid .ncs-signature-blank {
+        min-height: 4.1rem !important;
+        flex-basis: 4.1rem !important;
+    }
+
+    #template-test-device-accountability .tda-signatures-grid .ncs-signature-name-row {
+        min-height: 1.25rem !important;
+        flex-basis: 1.25rem !important;
+    }
+
+    #template-test-device-accountability .tda-signatures-grid .ncs-signature-role-row {
+        min-height: 1.05rem !important;
+        flex-basis: 1.05rem !important;
+    }
+
+    #template-test-device-accountability .tda-signatures-grid .ncs-signature-date-row {
+        min-height: 0.98rem !important;
+        flex-basis: 0.98rem !important;
+    }
+
+    /* Description cells may wrap; never replace long laptop text with an ellipsis. */
+    #template-accountability .ncs-details-table td:nth-child(4),
+    #template-test-device-accountability .ncs-details-table td:nth-child(4),
+    #template-return .ncs-return-table td:nth-child(2),
+    #template-return .ncs-return-table td:nth-child(4),
+    #template-sanitization .ncs-sanitization-table td:nth-child(2),
+    #template-sanitization .ncs-sanitization-table td:nth-child(4) {
+        white-space: normal !important;
+        overflow: visible !important;
+        overflow-wrap: anywhere !important;
+        word-break: break-word !important;
+        text-overflow: clip !important;
+        line-height: 1.08;
+    }
+
+    .ncs-print-description {
+        display: none;
+    }
+
+    #template-test-device-accountability .ncs-details-table td:nth-child(4) > .editable-input,
+    #template-test-device-accountability .ncs-details-table td:nth-child(4) > .editable-textarea,
+    #template-return .ncs-return-table td:nth-child(2) > .editable-input,
+    #template-return .ncs-return-table td:nth-child(2) > .editable-textarea,
+    #template-return .ncs-return-table td:nth-child(4) > .editable-input,
+    #template-return .ncs-return-table td:nth-child(4) > .editable-textarea,
+    #template-sanitization .ncs-sanitization-table td:nth-child(2) > .editable-input,
+    #template-sanitization .ncs-sanitization-table td:nth-child(2) > .editable-textarea,
+    #template-sanitization .ncs-sanitization-table td:nth-child(4) > .editable-input,
+    #template-sanitization .ncs-sanitization-table td:nth-child(4) > .editable-textarea {
+        display: none !important;
+    }
+
+    #template-return .ncs-return-table td:nth-child(4) > .combobox-wrapper,
+    #template-sanitization .ncs-sanitization-table td:nth-child(4) > .combobox-wrapper {
+        display: none !important;
+    }
+
+    #template-test-device-accountability .ncs-details-table td:nth-child(4) > .ncs-print-description,
+    #template-return .ncs-return-table td:nth-child(2) > .ncs-print-description,
+    #template-return .ncs-return-table td:nth-child(4) > .ncs-print-description,
+    #template-sanitization .ncs-sanitization-table td:nth-child(2) > .ncs-print-description,
+    #template-sanitization .ncs-sanitization-table td:nth-child(4) > .ncs-print-description {
+        display: block !important;
+        width: 100%;
+        white-space: normal;
+        overflow-wrap: anywhere;
+        word-break: break-word;
+        line-height: 1.08;
+        text-align: center;
+    }
+}
+
+/* Keep return/sanitation signatures on their final sheet when a name wraps. */
+@media print {
+    #template-return #returnForm[data-print-density="compact"],
+    #template-return .return-print-page[data-print-density="compact"],
+    #template-sanitization #sanitizationForm[data-print-density="compact"],
+    #template-sanitization .sanitization-print-page[data-print-density="compact"] {
+        zoom: calc(var(--ncs-print-fit-scale) * var(--ncs-print-name-scale, 1));
+    }
+
+    #template-return #returnForm[data-print-density="compact"] .ncs-info-table td,
+    #template-return .return-print-page[data-print-density="compact"] .ncs-info-table td,
+    #template-sanitization #sanitizationForm[data-print-density="compact"] .ncs-info-table td,
+    #template-sanitization .sanitization-print-page[data-print-density="compact"] .ncs-info-table td {
+        height: 1.42rem;
+        padding: 0.05rem 0.14rem;
+        font-size: calc(0.58rem * var(--ncs-print-name-scale, 1));
+        line-height: 1.04;
+        overflow: hidden;
+    }
+
+    #template-return #returnForm[data-print-density="compact"] .ncs-info-table .value,
+    #template-return .return-print-page[data-print-density="compact"] .ncs-info-table .value,
+    #template-sanitization #sanitizationForm[data-print-density="compact"] .ncs-info-table .value,
+    #template-sanitization .sanitization-print-page[data-print-density="compact"] .ncs-info-table .value {
+        overflow: hidden;
+        white-space: nowrap;
+    }
+
+    #template-return #returnForm[data-print-density="compact"] .ncs-info-table .value > input,
+    #template-return .return-print-page[data-print-density="compact"] .ncs-info-table .value > input,
+    #template-sanitization #sanitizationForm[data-print-density="compact"] .ncs-info-table .value > input,
+    #template-sanitization .sanitization-print-page[data-print-density="compact"] .ncs-info-table .value > input {
+        max-width: 100%;
+        min-width: 0;
+        overflow: hidden;
+        font-size: inherit;
+        line-height: inherit;
+        white-space: nowrap;
+    }
+
+    #template-sanitization #sanitizationForm[data-print-density="compact"] .ncs-san-signatures,
+    #template-sanitization .sanitization-print-page[data-print-density="compact"] .ncs-san-signatures {
+        margin-top: 0.7rem;
+    }
+
+    #template-sanitization #sanitizationForm[data-print-density="compact"] .ncs-san-grid-bottom,
+    #template-sanitization .sanitization-print-page[data-print-density="compact"] .ncs-san-grid-bottom {
+        margin-top: 1.05rem;
+    }
+
+    #template-sanitization #sanitizationForm[data-print-density="compact"] .ncs-signature-panel-small .ncs-signature-blank,
+    #template-sanitization .sanitization-print-page[data-print-density="compact"] .ncs-signature-panel-small .ncs-signature-blank {
+        min-height: 4.75rem;
+    }
+
+    #template-sanitization #sanitizationForm[data-print-density="compact"] .ncs-signature-panel-small .ncs-signature-name-row,
+    #template-sanitization #sanitizationForm[data-print-density="compact"] .ncs-signature-panel-small .ncs-signature-role-row,
+    #template-sanitization .sanitization-print-page[data-print-density="compact"] .ncs-signature-panel-small .ncs-signature-name-row,
+    #template-sanitization .sanitization-print-page[data-print-density="compact"] .ncs-signature-panel-small .ncs-signature-role-row {
+        height: 1.25rem;
+        min-height: 1.25rem;
+        max-height: 1.25rem;
+        overflow: hidden;
+        font-size: calc(0.55rem * var(--ncs-print-name-scale, 1));
+        line-height: 1.02;
+    }
+
+    #template-sanitization #sanitizationForm[data-print-density="compact"] .ncs-signature-panel-small .ncs-signature-static,
+    #template-sanitization .sanitization-print-page[data-print-density="compact"] .ncs-signature-panel-small .ncs-signature-static,
+    #template-sanitization #sanitizationForm[data-print-density="compact"] .ncs-signature-panel-small .ncs-signature-input,
+    #template-sanitization .sanitization-print-page[data-print-density="compact"] .ncs-signature-panel-small .ncs-signature-input {
+        max-height: 100%;
+        padding: 0.05rem 0.2rem;
+        font-size: inherit;
+        line-height: inherit;
+        overflow-wrap: anywhere;
+        overflow: hidden;
+    }
+
+    #template-sanitization #sanitizationForm[data-print-density="compact"] .ncs-signature-panel-small .ncs-signature-date-label,
+    #template-sanitization #sanitizationForm[data-print-density="compact"] .ncs-signature-panel-small .ncs-signature-date-cell,
+    #template-sanitization .sanitization-print-page[data-print-density="compact"] .ncs-signature-panel-small .ncs-signature-date-label,
+    #template-sanitization .sanitization-print-page[data-print-density="compact"] .ncs-signature-panel-small .ncs-signature-date-cell {
+        min-height: 1.35rem;
+    }
+}
+
+@media print {
+    #template-return #returnForm[data-print-density="compact"] .ncs-return-signature-panel .ncs-signature-blank,
+    #template-return .return-print-page[data-print-density="compact"] .ncs-return-signature-panel .ncs-signature-blank {
+        min-height: 3.8rem;
+    }
+
+    #template-return #returnForm[data-print-density="compact"] .ncs-return-signature-panel .ncs-signature-name-row,
+    #template-return #returnForm[data-print-density="compact"] .ncs-return-signature-panel .ncs-signature-role-row,
+    #template-return .return-print-page[data-print-density="compact"] .ncs-return-signature-panel .ncs-signature-name-row,
+    #template-return .return-print-page[data-print-density="compact"] .ncs-return-signature-panel .ncs-signature-role-row {
+        height: 1.12rem;
+        min-height: 1.12rem;
+        max-height: 1.12rem;
+        overflow: hidden;
+        font-size: calc(0.55rem * var(--ncs-print-name-scale, 1));
+        line-height: 1.02;
+    }
+
+    #template-return #returnForm[data-print-density="compact"] .ncs-return-signature-panel .ncs-signature-static,
+    #template-return .return-print-page[data-print-density="compact"] .ncs-return-signature-panel .ncs-signature-static,
+    #template-return #returnForm[data-print-density="compact"] .ncs-return-signature-panel .ncs-signature-input,
+    #template-return .return-print-page[data-print-density="compact"] .ncs-return-signature-panel .ncs-signature-input {
+        max-height: 100%;
+        padding: 0.05rem 0.2rem;
+        font-size: inherit;
+        line-height: inherit;
+        overflow-wrap: anywhere;
+        overflow: hidden;
+    }
+}
+
+/* Final text-fit rules: keep wrapped values inside their print cells. */
+@media print {
+    #template-accountability #accountabilityForm[data-print-density="compact"],
+    #template-accountability .accountability-print-page[data-print-density="compact"] {
+        zoom: 1;
+    }
+
+    #template-accountability #accountabilityForm[data-print-density="compact"] .ncs-accountability-signatures .ncs-signature-blank,
+    #template-accountability .accountability-print-page[data-print-density="compact"] .ncs-accountability-signatures .ncs-signature-blank {
+        min-height: 4rem !important;
+        flex-basis: 4rem !important;
+    }
+
+    #template-accountability #accountabilityForm[data-print-density="compact"] .ncs-accountability-signatures .ncs-signature-name-row,
+    #template-accountability .accountability-print-page[data-print-density="compact"] .ncs-accountability-signatures .ncs-signature-name-row {
+        min-height: 1.35rem !important;
+        flex-basis: 1.35rem !important;
+        height: auto !important;
+        max-height: none !important;
+        line-height: 1.02 !important;
+        overflow: visible !important;
+    }
+
+    #template-accountability #accountabilityForm[data-print-density="compact"] .ncs-accountability-signatures .ncs-signature-role-row,
+    #template-accountability .accountability-print-page[data-print-density="compact"] .ncs-accountability-signatures .ncs-signature-role-row {
+        min-height: 1.05rem !important;
+        flex-basis: 1.05rem !important;
+        height: auto !important;
+        max-height: none !important;
+        line-height: 1.02 !important;
+        overflow: visible !important;
+    }
+
+    #template-accountability #accountabilityForm[data-print-density="compact"] .ncs-authority-section,
+    #template-accountability .accountability-print-page[data-print-density="compact"] .ncs-authority-section {
+        margin-top: 4px !important;
+    }
+
+    #template-accountability #accountabilityForm[data-print-density="compact"] .ncs-authority-section .auth-text,
+    #template-accountability .accountability-print-page[data-print-density="compact"] .ncs-authority-section .auth-text {
+        margin-bottom: 0.15rem;
+        padding-top: 0.36rem;
+        padding-bottom: 0.36rem;
+        line-height: 1.12;
+    }
+
+    #template-accountability #accountabilityForm[data-print-density="compact"] .ncs-signature-name-row.ncs-signature-static,
+    #template-accountability .accountability-print-page[data-print-density="compact"] .ncs-signature-name-row.ncs-signature-static {
+        font-size: 0.6rem;
+        white-space: normal !important;
+        overflow-wrap: anywhere !important;
+        word-break: break-word !important;
+        padding-left: 0.1rem !important;
+        padding-right: 0.1rem !important;
+    }
+
+    #template-accountability #accountabilityForm[data-print-density="compact"] .ncs-signature-role-row.ncs-signature-static,
+    #template-accountability .accountability-print-page[data-print-density="compact"] .ncs-signature-role-row.ncs-signature-static {
+        font-size: 0.58rem;
+        white-space: normal !important;
+        overflow-wrap: anywhere !important;
+        word-break: break-word !important;
+        padding-left: 0.1rem !important;
+        padding-right: 0.1rem !important;
+    }
+
+    #template-return #returnForm .ncs-return-signature-panel .ncs-signature-name-row,
+    #template-return .return-print-page .ncs-return-signature-panel .ncs-signature-name-row {
+        min-height: 1.15rem !important;
+        height: auto !important;
+        max-height: none !important;
+        line-height: 1.02 !important;
+        overflow: visible !important;
+    }
+
+    #template-return #returnForm .ncs-return-signature-panel .ncs-signature-role-row,
+    #template-return .return-print-page .ncs-return-signature-panel .ncs-signature-role-row {
+        min-height: 1.02rem !important;
+        height: auto !important;
+        max-height: none !important;
+        line-height: 1.02 !important;
+        overflow: visible !important;
+    }
+
+    #template-sanitization #sanitizationForm .ncs-signature-panel-small .ncs-signature-name-row,
+    #template-sanitization .sanitization-print-page .ncs-signature-panel-small .ncs-signature-name-row {
+        min-height: 1rem !important;
+        height: auto !important;
+        max-height: none !important;
+        line-height: 1.02 !important;
+        overflow: visible !important;
+    }
+
+    #template-sanitization #sanitizationForm .ncs-signature-panel-small .ncs-signature-role-row,
+    #template-sanitization .sanitization-print-page .ncs-signature-panel-small .ncs-signature-role-row {
+        min-height: 0.92rem !important;
+        height: auto !important;
+        max-height: none !important;
+        line-height: 1.02 !important;
+        overflow: visible !important;
+    }
+}
+
+/* Final accountability fit: use the available sheet height and preserve all
+   long position and model-description values. */
+@media print {
+    #template-accountability #accountabilityForm {
+        min-height: 170mm !important;
+        display: flex !important;
+        flex-direction: column !important;
+    }
+
+    #template-accountability #accountabilityForm .ncs-authority-section,
+    #template-accountability .accountability-print-page[data-page-role="final"] .ncs-authority-section {
+        display: flex !important;
+        flex: 1 1 auto;
+        flex-direction: column !important;
+        min-height: 0;
+        margin-top: 4px !important;
+        overflow: visible !important;
+    }
+
+    #template-accountability #accountabilityForm .ncs-accountability-signatures,
+    #template-accountability .accountability-print-page[data-page-role="final"] .ncs-accountability-signatures {
+        flex: 0 0 auto;
+        margin-top: auto !important;
+    }
+
+    #template-accountability #accountabilityForm[data-print-density="compact"] .ncs-accountability-signatures .ncs-signature-blank,
+    #template-accountability #accountabilityForm[data-print-density="compact"] .ncs-signature-blank {
+        min-height: 4rem !important;
+        flex-basis: 4rem !important;
+    }
+
+    /* Keep compact tables in normal document flow. The previous combination
+       of a negative margin and a negative relative offset pulled every block
+       into the one above it, hiding the first employee-information row under
+       the title band. */
+    #template-accountability #accountabilityForm[data-print-density="compact"] .form-top-row,
+    #template-accountability .accountability-print-page[data-print-density="compact"] .form-top-row {
+        margin-bottom: 0 !important;
+    }
+
+    #template-accountability #accountabilityForm[data-print-density="compact"] .ncs-form-title,
+    #template-accountability .accountability-print-page[data-print-density="compact"] .ncs-form-title {
+        position: relative !important;
+        z-index: 3;
+    }
+
+    #template-accountability #accountabilityForm[data-print-density="compact"] .ncs-info-table,
+    #template-accountability .accountability-print-page[data-print-density="compact"] .ncs-info-table {
+        position: relative !important;
+        top: 0 !important;
+        z-index: 2;
+        margin-top: 0 !important;
+        page-break-inside: avoid !important;
+        break-inside: avoid-page !important;
+    }
+
+    #template-accountability #accountabilityForm[data-print-density="compact"] .ncs-info-table tr,
+    #template-accountability .accountability-print-page[data-print-density="compact"] .ncs-info-table tr {
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+    }
+
+    #template-accountability #accountabilityForm[data-print-density="compact"] .ncs-details-table,
+    #template-accountability .accountability-print-page[data-print-density="compact"] .ncs-details-table {
+        position: relative !important;
+        top: 0 !important;
+        margin-top: -1px !important;
+    }
+
+    #template-accountability #accountabilityForm[data-print-density="compact"] .ncs-authority-section,
+    #template-accountability .accountability-print-page[data-page-role="final"][data-print-density="compact"] .ncs-authority-section {
+        position: relative !important;
+        top: 0 !important;
+        margin-top: 4px !important;
+    }
+
+    #template-accountability #accountabilityForm .ncs-info-table td.value,
+    #template-accountability .accountability-print-page .ncs-info-table td.value {
+        height: auto !important;
+        min-height: 1.34rem;
+        max-height: none !important;
+        overflow: visible !important;
+        white-space: normal !important;
+        overflow-wrap: anywhere !important;
+        word-break: break-word !important;
+        line-height: 1.12 !important;
+        vertical-align: middle;
+    }
+
+    #template-accountability #accountabilityForm .ncs-info-table td.value > .editable-input,
+    #template-accountability #accountabilityForm .ncs-info-table td.value > .editable-textarea {
+        display: none !important;
+    }
+
+    #template-accountability #accountabilityForm .ncs-info-table td.value > .ncs-print-info-value {
+        display: block !important;
+        width: 100%;
+        white-space: normal !important;
+        overflow: visible !important;
+        overflow-wrap: anywhere !important;
+        word-break: break-word !important;
+        line-height: 1.12 !important;
+        text-align: inherit;
+    }
+
+    #template-accountability #accountabilityForm .ncs-details-table tr,
+    #template-accountability .accountability-print-page .ncs-details-table tr {
+        height: auto !important;
+    }
+
+    #template-accountability #accountabilityForm .ncs-details-table td:nth-child(4),
+    #template-accountability .accountability-print-page .ncs-details-table td:nth-child(4) {
+        height: auto !important;
+        min-height: 1.12rem;
+        max-height: none !important;
+        overflow: visible !important;
+        white-space: normal !important;
+        overflow-wrap: anywhere !important;
+        word-break: break-word !important;
+        text-overflow: clip !important;
+        line-height: 1.12 !important;
+        vertical-align: middle;
+    }
+
+    .form-template[data-print-visible="true"] .ncs-signature-name-row,
+    .form-template[data-print-visible="true"] .ncs-signature-role-row {
+        height: auto !important;
+        min-height: 1.1rem !important;
+        max-height: none !important;
+        flex: 0 0 auto !important;
+        overflow: visible !important;
+        line-height: 1.08 !important;
+        padding: 0.1rem 0.15rem !important;
+    }
+
+    .form-template[data-print-visible="true"] .ncs-signature-name-row > .ncs-signature-textarea,
+    .form-template[data-print-visible="true"] .ncs-signature-role-row > .ncs-signature-textarea {
+        display: none !important;
+    }
+
+    .form-template[data-print-visible="true"] .ncs-signature-name-row > .ncs-print-signature-value,
+    .form-template[data-print-visible="true"] .ncs-signature-role-row > .ncs-print-signature-value {
+        display: block !important;
+        width: 100%;
+        min-height: 0;
+        white-space: normal !important;
+        overflow: visible !important;
+        overflow-wrap: anywhere !important;
+        word-break: break-word !important;
+        line-height: 1.08 !important;
+        text-align: center;
+    }
+
+    .form-template[data-print-visible="true"] .ncs-signature-name-row > .ncs-print-signature-value {
+        font-size: 0.67rem;
+        font-weight: 800;
+    }
+
+    .form-template[data-print-visible="true"] .ncs-signature-role-row > .ncs-print-signature-value {
+        font-size: 0.62rem;
+        font-weight: 500;
+    }
+}
+
+/* Keep Asset Accountability signatures in the same compact print flow as
+   Test Device Accountability: the cards follow the authority text instead
+   of being pushed to the bottom of the flex section. */
+@media print {
+    #template-accountability #accountabilityForm .ncs-accountability-signatures,
+    #template-accountability .accountability-print-page[data-page-role="final"] .ncs-accountability-signatures,
+    #template-test-device-accountability .tda-signatures-grid.ncs-accountability-signatures {
+        grid-template-columns: repeat(3, minmax(0, 24.5%)) !important;
+        justify-content: space-between !important;
+        gap: 1.55rem !important;
+    }
+
+    #template-accountability #accountabilityForm .ncs-accountability-signatures,
+    #template-accountability .accountability-print-page[data-page-role="final"] .ncs-accountability-signatures {
+        margin-top: 0 !important;
+        padding-top: 0.3rem !important;
+        padding-right: 1.25rem !important;
+        padding-bottom: 0.15rem !important;
+        padding-left: 1.25rem !important;
+        page-break-inside: avoid !important;
+        break-inside: avoid-page !important;
+    }
+
+    #template-accountability #accountabilityForm .ncs-accountability-signatures .ncs-signature-panel,
+    #template-accountability .accountability-print-page[data-page-role="final"] .ncs-accountability-signatures .ncs-signature-panel,
+    #template-accountability #accountabilityForm .ncs-accountability-signatures > .sig-column,
+    #template-accountability .accountability-print-page[data-page-role="final"] .ncs-accountability-signatures > .sig-column {
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+    }
+
+    /* Blank and short Accountability forms have a tall Authority to Deduct
+       panel. Place the signature cards in its lower-middle area instead of
+       directly beneath the affirmation text, without consuming the space
+       needed by dense multi-asset layouts. */
+    #template-accountability #accountabilityForm:is([data-asset-count="0"], [data-asset-count="1"]) .ncs-accountability-signatures,
+    #template-accountability .accountability-print-page[data-page-role="final"][data-asset-count="1"] .ncs-accountability-signatures {
+        margin-top: 3.75rem !important;
+    }
+
+    #template-accountability #accountabilityForm[data-asset-count="2"] .ncs-accountability-signatures,
+    #template-accountability .accountability-print-page[data-page-role="final"][data-asset-count="2"] .ncs-accountability-signatures {
+        margin-top: 1.85rem !important;
+    }
+
+    /* Keep Test Device signer roles inside a fixed page-height budget. Long
+       positions use progressively smaller print mirrors instead of growing
+       the signature grid and pushing it onto another sheet. */
+    #template-test-device-accountability .tda-signatures-grid .ncs-signature-role-row {
+        box-sizing: border-box !important;
+        height: 1.4rem !important;
+        min-height: 1.4rem !important;
+        max-height: 1.4rem !important;
+        flex: 0 0 1.4rem !important;
+        padding: 0.05rem 0.12rem !important;
+        overflow: hidden !important;
+    }
+
+    #template-test-device-accountability .tda-signatures-grid .ncs-signature-role-row > .ncs-print-signature-value {
+        display: block !important;
+        width: 100%;
+        max-height: 100%;
+        overflow: hidden !important;
+        white-space: normal !important;
+        overflow-wrap: anywhere !important;
+        word-break: break-word !important;
+        hyphens: auto;
+        font-size: 0.62rem !important;
+        line-height: 1.02 !important;
+        text-align: center;
+    }
+
+    #template-test-device-accountability .tda-signatures-grid .ncs-signature-role-row > .ncs-print-signature-value[data-print-fit="compact"] {
+        font-size: 0.55rem !important;
+        line-height: 1 !important;
+    }
+
+    #template-test-device-accountability .tda-signatures-grid .ncs-signature-role-row > .ncs-print-signature-value[data-print-fit="tight"] {
+        font-size: 0.48rem !important;
+        line-height: 1 !important;
+    }
+
+    #template-test-device-accountability .tda-signatures-grid .ncs-signature-role-row > .ncs-print-signature-value[data-print-fit="ultra"] {
+        font-size: 0.41rem !important;
+        line-height: 1 !important;
+        letter-spacing: -0.01em;
+    }
+}
+
+/* Final print safety contract. These rules cover the dense states that need
+   stricter pagination and text fitting than the normal workbook layout. */
+@media print {
+    /* A generated Return continuation must finish before Sanitation starts.
+       The final generated Return page intentionally has no own break-after,
+       so enforce the workflow boundary on its template wrapper. */
+    #template-return.is-paged-print[data-print-visible="true"] {
+        break-after: page !important;
+        page-break-after: always !important;
+    }
+
+    /* Print editable information cells through wrapping mirrors. Native text
+       inputs are single-line and silently clip long employee details. */
+    #template-test-device-accountability .ncs-info-table td.value > input,
+    #template-test-device-accountability .ncs-info-table td.value > textarea,
+    #template-return .ncs-info-table td.value > input,
+    #template-return .ncs-info-table td.value > textarea,
+    #template-sanitization .ncs-info-table td.value > input,
+    #template-sanitization .ncs-info-table td.value > textarea {
+        display: none !important;
+    }
+
+    #template-return .ncs-info-table td.value > .combobox-wrapper,
+    #template-return .ncs-info-table td.value > .custom-date-wrapper,
+    #template-sanitization .ncs-info-table td.value > .combobox-wrapper,
+    #template-sanitization .ncs-info-table td.value > .custom-date-wrapper {
+        display: none !important;
+    }
+
+    #template-test-device-accountability .ncs-info-table td.value > .ncs-print-info-value,
+    #template-return .ncs-info-table td.value > .ncs-print-info-value,
+    #template-sanitization .ncs-info-table td.value > .ncs-print-info-value {
+        display: block !important;
+        width: 100%;
+        max-width: 100%;
+        white-space: normal !important;
+        overflow: visible !important;
+        overflow-wrap: anywhere !important;
+        word-break: break-word !important;
+        line-height: 1.04 !important;
+        text-align: inherit;
+    }
+
+    #template-test-device-accountability .ncs-info-table td.value > .ncs-print-info-value[data-print-fit="compact"] {
+        font-size: 0.66rem !important;
+    }
+
+    #template-test-device-accountability .ncs-info-table td.value > .ncs-print-info-value[data-print-fit="tight"] {
+        font-size: 0.58rem !important;
+        line-height: 1 !important;
+    }
+
+    #template-test-device-accountability .ncs-info-table td.value > .ncs-print-info-value[data-print-fit="ultra"] {
+        font-size: 0.51rem !important;
+        line-height: 1 !important;
+        letter-spacing: -0.01em;
+    }
+
+    #template-return .ncs-info-table td.value > .ncs-print-info-value[data-print-fit="compact"],
+    #template-sanitization .ncs-info-table td.value > .ncs-print-info-value[data-print-fit="compact"] {
+        font-size: 0.52rem !important;
+    }
+
+    #template-return .ncs-info-table td.value > .ncs-print-info-value[data-print-fit="tight"],
+    #template-sanitization .ncs-info-table td.value > .ncs-print-info-value[data-print-fit="tight"] {
+        font-size: 0.46rem !important;
+        line-height: 1 !important;
+    }
+
+    #template-return .ncs-info-table td.value > .ncs-print-info-value[data-print-fit="ultra"],
+    #template-sanitization .ncs-info-table td.value > .ncs-print-info-value[data-print-fit="ultra"] {
+        font-size: 0.4rem !important;
+        line-height: 1 !important;
+        letter-spacing: -0.01em;
+    }
+
+    /* Accountability signer mirrors shrink by content tier before they need a
+       third line, keeping names and roles clear of adjacent row borders. */
+    #template-accountability .ncs-accountability-signatures .ncs-signature-name-row > .ncs-print-signature-value[data-print-fit="compact"] {
+        font-size: 0.56rem !important;
+        line-height: 1.02 !important;
+    }
+
+    #template-accountability .ncs-accountability-signatures .ncs-signature-name-row > .ncs-print-signature-value[data-print-fit="tight"] {
+        font-size: 0.5rem !important;
+        line-height: 1 !important;
+    }
+
+    #template-accountability .ncs-accountability-signatures .ncs-signature-name-row > .ncs-print-signature-value[data-print-fit="ultra"] {
+        font-size: 0.44rem !important;
+        line-height: 1 !important;
+        letter-spacing: -0.01em;
+    }
+
+    #template-accountability .ncs-accountability-signatures .ncs-signature-role-row > .ncs-print-signature-value[data-print-fit="compact"] {
+        font-size: 0.54rem !important;
+        line-height: 1.02 !important;
+    }
+
+    #template-accountability .ncs-accountability-signatures .ncs-signature-role-row > .ncs-print-signature-value[data-print-fit="tight"] {
+        font-size: 0.47rem !important;
+        line-height: 1 !important;
+    }
+
+    #template-accountability .ncs-accountability-signatures .ncs-signature-role-row > .ncs-print-signature-value[data-print-fit="ultra"] {
+        font-size: 0.41rem !important;
+        line-height: 1 !important;
+        letter-spacing: -0.01em;
+    }
+
+    #template-accountability #accountabilityForm .ncs-accountability-signatures .ncs-signature-name-row,
+    #template-accountability #accountabilityForm .ncs-accountability-signatures .ncs-signature-role-row,
+    #template-accountability .accountability-print-page[data-page-role="final"] .ncs-accountability-signatures .ncs-signature-name-row,
+    #template-accountability .accountability-print-page[data-page-role="final"] .ncs-accountability-signatures .ncs-signature-role-row {
+        height: auto !important;
+        max-height: none !important;
+        flex: 0 0 auto !important;
+        flex-basis: auto !important;
+        overflow: visible !important;
+    }
+
+    /* Six long assets are the tallest valid one-page Sanitation state. Keep a
+       usable signing area while preventing the centered bottom pair from
+       being pushed to a third physical sheet. */
+    #template-sanitization #sanitizationForm[data-print-density="compact"][data-print-asset-count="6"] .ncs-san-signatures {
+        margin-top: 0.42rem !important;
+    }
+
+    #template-sanitization #sanitizationForm[data-print-density="compact"][data-print-asset-count="6"] .ncs-san-grid-bottom {
+        margin-top: 0.42rem !important;
+    }
+
+    #template-sanitization #sanitizationForm[data-print-density="compact"][data-print-asset-count="6"] .ncs-signature-panel-small .ncs-signature-blank {
+        min-height: 2.8rem !important;
+    }
+
+    #template-sanitization #sanitizationForm[data-print-density="compact"][data-print-asset-count="6"] .ncs-signature-panel-small .ncs-signature-date-label,
+    #template-sanitization #sanitizationForm[data-print-density="compact"][data-print-asset-count="6"] .ncs-signature-panel-small .ncs-signature-date-cell {
+        min-height: 1.1rem !important;
+    }
+}
