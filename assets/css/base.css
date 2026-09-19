@@ -1,0 +1,291 @@
+:root {
+    --bg-color: #0f172a;
+    --card-bg: rgba(30, 41, 59, 0.7);
+    --border-color: rgba(255, 255, 255, 0.1);
+    --text-primary: #f8fafc;
+    --text-secondary: #94a3b8;
+    --accent-blue: #3b82f6;
+    --accent-blue-hover: #2563eb;
+    --accent-purple: #8b5cf6;
+    --theme-accent-foreground: #ffffff;
+    --form-preview-overlay: rgba(255, 216, 154, 0);
+    --form-preview-border: rgba(255, 255, 255, 0.06);
+    --form-preview-filter: none;
+    --danger: #ef4444;
+    --success: #10b981;
+    --theme-panel-tint: rgba(15, 23, 42, 0.6);
+    --theme-base-gradient: linear-gradient(145deg, #0f172a 0%, #111827 52%, #020617 100%);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Inter', sans-serif;
+}
+
+html,
+body,
+.main-content {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+html::-webkit-scrollbar,
+body::-webkit-scrollbar,
+.main-content::-webkit-scrollbar {
+    width: 0;
+    height: 0;
+    display: none;
+}
+
+body {
+    background: var(--bg-color);
+    background-image: var(--theme-base-gradient);
+    color: var(--text-primary);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    position: relative;
+    isolation: isolate;
+    overflow-x: hidden;
+}
+
+body.settings-page {
+    display: block;
+}
+
+.app-container,
+.settings-page-shell {
+    position: relative;
+    z-index: 1;
+}
+
+.app-container {
+    display: flex;
+    width: 100%;
+    max-width: 1400px;
+    height: 100vh;
+    min-height: 100vh;
+}
+
+/* Sidebar */
+.config-panel {
+    width: clamp(280px, 28vw, 320px);
+    flex: 0 0 clamp(280px, 28vw, 320px);
+    background: var(--theme-panel-tint);
+    border-right: 1px solid var(--border-color);
+    padding: 2rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    overflow-y: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.config-panel::-webkit-scrollbar {
+    width: 0;
+    height: 0;
+    display: none;
+}
+
+.panel-header {
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+
+.panel-header-actions {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: stretch;
+    gap: 0.65rem;
+    width: 100%;
+}
+
+.settings-nav-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.65rem;
+    min-width: 0;
+    position: relative;
+    isolation: isolate;
+    padding: 0.78rem 0.85rem;
+    border-radius: 14px;
+    border: 1px solid rgba(255, 255, 255, 0.09);
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.03));
+    color: var(--text-primary);
+    font-size: 1.05rem;
+    font-weight: 700;
+    text-decoration: none;
+    transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s, background 0.2s;
+}
+
+.settings-nav-btn:hover {
+    transform: translateY(-1px);
+    border-color: rgba(255, 255, 255, 0.16);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.18);
+}
+
+.settings-nav-btn i {
+    color: var(--text-primary);
+    opacity: 0.92;
+    flex: 0 0 auto;
+}
+
+.settings-nav-btn span {
+    min-width: 0;
+    white-space: nowrap;
+}
+
+.tutorial-launch-btn {
+    cursor: pointer;
+    font-family: inherit;
+}
+
+@property --tutorial-glow-angle {
+    syntax: '<angle>';
+    inherits: false;
+    initial-value: 0deg;
+}
+
+.tutorial-launch-btn::before,
+.tutorial-launch-btn::after {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    border-radius: inherit;
+    display: none;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+
+.tutorial-launch-btn::before {
+    --tutorial-glow-angle: 0deg;
+    padding: 2px;
+    background: conic-gradient(
+        from var(--tutorial-glow-angle),
+        rgba(255, 255, 255, 0) 0deg,
+        rgba(255, 255, 255, 0) 300deg,
+        rgba(255, 255, 255, 0.98) 320deg,
+        rgba(167, 243, 208, 0.95) 336deg,
+        rgba(196, 181, 253, 0.98) 350deg,
+        rgba(96, 165, 250, 0.2) 360deg
+    );
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+}
+
+.tutorial-launch-btn::after {
+    display: none;
+}
+
+.tutorial-launch-btn.is-glowing::before,
+.tutorial-launch-btn.is-glowing::after {
+    display: block;
+    opacity: 1;
+}
+
+.tutorial-launch-btn.is-glowing::before {
+    animation: tutorial-border-spin 2s linear infinite;
+}
+
+@keyframes tutorial-border-spin {
+    from {
+        --tutorial-glow-angle: 0deg;
+    }
+
+    to {
+        --tutorial-glow-angle: 360deg;
+    }
+}
+
+.panel-credit {
+    font-size: 1.02rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    line-height: 1.2;
+    margin-bottom: -0.85rem;
+    background: linear-gradient(120deg, #dbeafe 0%, #93c5fd 22%, #60a5fa 45%, #38bdf8 68%, #818cf8 100%);
+    background-size: 220% 220%;
+    color: transparent;
+    -webkit-background-clip: text;
+    background-clip: text;
+    text-shadow: 0 0 16px rgba(96, 165, 250, 0.18);
+}
+
+@keyframes creditGradientShift {
+    0% {
+        background-position: 0% 50%;
+    }
+
+    100% {
+        background-position: 200% 50%;
+    }
+}
+
+.gsheet-manager label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+}
+
+.input-group {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.input-group input {
+    flex: 1;
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    padding: 0.5rem 0.75rem;
+    color: var(--text-primary);
+    outline: none;
+    transition: all 0.2s;
+}
+
+.input-group input:focus {
+    border-color: var(--accent-blue);
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+}
+
+.text-input {
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    padding: 0.75rem;
+    color: var(--text-primary);
+    outline: none;
+    transition: all 0.2s;
+}
+
+.text-input:focus {
+    border-color: var(--accent-blue);
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+}
+
+.file-input {
+    background: rgba(0, 0, 0, 0.1) !important;
+    border: 1px dashed var(--border-color) !important;
+    padding: 0.75rem !important;
+    cursor: pointer;
+}
+
+.file-input::file-selector-button,
+.file-input::-webkit-file-upload-button {
+    background: var(--accent-blue);
+    color: var(--theme-accent-foreground);
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-right: 1rem;
+    font-weight: 500;
+}

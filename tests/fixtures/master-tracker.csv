@@ -1,0 +1,7 @@
+Employee ID,Employee Name,Employee Position,Cost Center,Business Unit,Asset Tag,Laptop Description,Serial No,Email Address,Contact Number,Issued By,Issuer Position,Setup Date,Employee Status
+1001,Jane Doe,Software Engineer,CC100,Engineering,LAP-001,Lenovo ThinkPad,SN-001,jane@example.com,123456,Ruzzel Micko G. Padua,IT Asset Custodian,2026-01-15,ACTIVE
+1001,Jane Doe,Software Engineer,CC100,Engineering,MON-001,Dell Monitor,SN-MON-001,jane@example.com,123456,Ruzzel Micko G. Padua,IT Asset Custodian,2026-01-15,ACTIVE
+1002,John Smith,QA Analyst,CC200,QA,LAP-002,HP EliteBook,SN-002,john@example.com,987654,Ruzzel Micko G. Padua,IT Asset Custodian,2026-01-16,ACTIVE
+2001,Sam Lee,Operations Specialist,CC210,Ops,LAP-010,MacBook Air,SN-010,sam1@example.com,555111,Ruzzel Micko G. Padua,IT Asset Custodian,2026-02-01,ACTIVE
+2002,Sam Lee ,Operations Specialist,CC211,Ops,LAP-011,MacBook Pro,SN-011,sam2@example.com,555222,Ruzzel Micko G. Padua,IT Asset Custodian,2026-02-02,ACTIVE
+3001,Chris P. Bacon,Designer,CC320,Design,LAP-020,Surface Laptop,SN-020,chris@example.com,555333,Ruzzel Micko G. Padua,IT Asset Custodian,2026-02-10,ACTIVE
