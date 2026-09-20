@@ -1,5 +1,6 @@
 # NCS ITSM Multi-Source Form Automation & Asset Reconciliation Engine
 
+[![CI](https://github.com/MishaelOliva/NCS-Automation/actions/workflows/ci.yml/badge.svg)](https://github.com/MishaelOliva/NCS-Automation/actions/workflows/ci.yml)
 [![JavaScript](https://img.shields.io/badge/JavaScript-ES6+-F7DF1E.svg?style=flat&logo=javascript&logoColor=black)](https://developer.mozilla.org/en-US/docs/Web/JavaScript)
 [![HTML5 / CSS3 Print](https://img.shields.io/badge/Engine-Pixel--Perfect%20Print%20CSS-E34F26.svg?style=flat&logo=html5&logoColor=white)]()
 [![IndexedDB](https://img.shields.io/badge/Storage-IndexedDB%20(Zero--Cloud)-4285F4.svg?style=flat)]()
