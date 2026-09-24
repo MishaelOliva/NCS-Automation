@@ -1686,6 +1686,34 @@ body.excel-modal-open {
     color: #334155;
 }
 
+.excel-copy-btn {
+    background: #107c41;
+    color: #ffffff;
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    padding: 0.45rem 0.85rem;
+    border-radius: 6px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    transition: all 0.2s;
+    white-space: nowrap;
+}
+
+.excel-copy-btn:hover {
+    background: #0d6535;
+    border-color: #ffffff;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+.excel-copy-btn.copied {
+    background: #059669 !important;
+    border-color: #a7f3d0 !important;
+    box-shadow: 0 0 0 2px #34d399 !important;
+}
+
 .excel-download-btn {
     background: #0b582c;
     color: #ffffff;
@@ -1724,6 +1752,100 @@ body.excel-modal-open {
     background: rgba(255, 255, 255, 0.2);
 }
 
+/* Formula & Address Bar */
+.excel-formula-bar {
+    display: flex;
+    align-items: center;
+    background: #fdfdfd;
+    border-bottom: 1px solid #d2d0ce;
+    padding: 4px 12px;
+    gap: 8px;
+    font-size: 12px;
+    flex-shrink: 0;
+}
+
+.excel-name-box {
+    background: #ffffff;
+    border: 1px solid #d2d0ce;
+    border-radius: 3px;
+    padding: 3px 8px;
+    font-weight: 700;
+    color: #107c41;
+    font-family: Consolas, 'Courier New', monospace;
+    font-size: 11px;
+    min-width: 65px;
+    text-align: center;
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.04);
+    user-select: none;
+}
+
+.excel-formula-icon {
+    font-weight: 700;
+    font-style: italic;
+    color: #605e5c;
+    font-family: Georgia, serif;
+    font-size: 13px;
+    user-select: none;
+    padding: 0 4px;
+}
+
+.excel-formula-input-wrapper {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    min-width: 120px;
+}
+
+.excel-formula-input {
+    width: 100%;
+    border: 1px solid #d2d0ce;
+    border-radius: 3px;
+    padding: 3px 8px;
+    font-size: 12px;
+    color: #201f1e;
+    background: #ffffff;
+    outline: none;
+    cursor: default;
+}
+
+.excel-formula-input:focus {
+    border-color: #107c41;
+}
+
+.excel-selection-meta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    user-select: none;
+    margin-left: auto;
+}
+
+.excel-selection-count-badge {
+    background: rgba(16, 124, 65, 0.08);
+    color: #107c41;
+    font-weight: 600;
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 12px;
+    border: 1px solid rgba(16, 124, 65, 0.25);
+    white-space: nowrap;
+}
+
+.excel-selection-hint {
+    color: #8a8886;
+    font-size: 11px;
+    white-space: nowrap;
+}
+
+@media (max-width: 768px) {
+    .excel-selection-hint {
+        display: none;
+    }
+    .excel-copy-btn span {
+        display: none;
+    }
+}
+
 /* Grid Viewport */
 .excel-grid-viewport {
     flex: 1;
@@ -1740,6 +1862,7 @@ body.excel-modal-open {
     min-width: 100%;
     table-layout: auto;
     font-size: 12px;
+    user-select: none;
 }
 
 /* Corner & Header Cells */
@@ -1754,6 +1877,11 @@ body.excel-modal-open {
     width: 52px;
     min-width: 52px;
     padding: 4px;
+    cursor: pointer;
+}
+
+.excel-corner-cell:hover {
+    background: #e1dfdd;
 }
 
 .excel-col-header-row {
@@ -1774,6 +1902,12 @@ body.excel-modal-open {
     border-right: 1px solid #e1dfdd;
     border-bottom: 1px solid #d2d0ce;
     user-select: none;
+    cursor: pointer;
+}
+
+.excel-col-letter:hover {
+    background: #e1dfdd;
+    color: #107c41;
 }
 
 .excel-title-header-row {
@@ -1834,6 +1968,7 @@ body.excel-modal-open {
     width: 52px;
     min-width: 52px;
     user-select: none;
+    cursor: pointer;
 }
 
 .excel-data-row:hover .excel-row-number {
@@ -1850,13 +1985,93 @@ body.excel-modal-open {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    user-select: text;
+    user-select: none;
     cursor: cell;
 }
 
 .excel-cell:hover {
     outline: 1px solid #107c41;
     outline-offset: -1px;
+}
+
+/* Excel Cell Selection Highlighting */
+.excel-cell-selected {
+    background-color: rgba(16, 124, 65, 0.12) !important;
+}
+
+.excel-cell-anchor {
+    background-color: #ffffff !important;
+}
+
+.excel-sel-top {
+    border-top: 2px solid #107c41 !important;
+}
+
+.excel-sel-bottom {
+    border-bottom: 2px solid #107c41 !important;
+}
+
+.excel-sel-left {
+    border-left: 2px solid #107c41 !important;
+}
+
+.excel-sel-right {
+    border-right: 2px solid #107c41 !important;
+}
+
+/* Selected Column & Row Headers */
+.excel-col-letter.excel-header-selected,
+.excel-row-number.excel-header-selected {
+    background: #107c41 !important;
+    color: #ffffff !important;
+    font-weight: 700 !important;
+}
+
+/* Copied Shimmer Animation */
+@keyframes excelCopiedFlash {
+    0% {
+        background-color: #34d399 !important;
+    }
+    50% {
+        background-color: rgba(16, 124, 65, 0.35) !important;
+    }
+    100% {
+        background-color: rgba(16, 124, 65, 0.12) !important;
+    }
+}
+
+.excel-cell-copied {
+    animation: excelCopiedFlash 0.5s ease-out;
+}
+
+/* Excel Toast Notification */
+.excel-toast {
+    position: absolute;
+    bottom: 54px;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: #1e293b;
+    color: #ffffff;
+    font-size: 0.82rem;
+    font-weight: 500;
+    padding: 8px 18px;
+    border-radius: 8px;
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.28);
+    z-index: 100;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.25s ease, transform 0.25s ease;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    white-space: nowrap;
+}
+
+.excel-toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+}
+
+.excel-toast.hide {
+    display: none;
 }
 
 /* Empty State */

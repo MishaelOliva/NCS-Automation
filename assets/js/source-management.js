@@ -1569,6 +1569,10 @@
             let currentPreviewPageSize = 100;
             let currentSearchTerm = '';
             let excelEventsBound = false;
+            let excelSelection = null; // { startRow: 0, startCol: 0, endRow: 0, endCol: 0 }
+            let isSelectingExcelCells = false;
+            let excelToastTimeout = null;
+            let excelCopyBtnTimeout = null;
 
             function getColumnLetter(colIndex) {
                 let temp = colIndex + 1;
@@ -1601,11 +1605,19 @@
                 if (!elements.excelPreviewModal && typeof document !== 'undefined') {
                     elements.excelPreviewModal = document.getElementById('excelPreviewModal');
                     elements.excelCloseBtn = document.getElementById('excelCloseBtn');
+                    elements.excelCopyBtn = document.getElementById('excelCopyBtn');
+                    elements.excelCopyBtnText = document.getElementById('excelCopyBtnText');
                     elements.excelDownloadBtn = document.getElementById('excelDownloadBtn');
                     elements.excelSearchInput = document.getElementById('excelSearchInput');
                     elements.excelSearchClearBtn = document.getElementById('excelSearchClearBtn');
+                    elements.excelFormulaBar = document.getElementById('excelFormulaBar');
+                    elements.excelActiveCellAddress = document.getElementById('excelActiveCellAddress');
+                    elements.excelFormulaValue = document.getElementById('excelFormulaValue');
+                    elements.excelSelectionCountBadge = document.getElementById('excelSelectionCountBadge');
+                    elements.excelToast = document.getElementById('excelToast');
                     elements.excelTableHead = document.getElementById('excelTableHead');
                     elements.excelTableBody = document.getElementById('excelTableBody');
+                    elements.excelTable = document.getElementById('excelTable');
                     elements.excelModalTitle = document.getElementById('excelModalTitle');
                     elements.excelRoleBadge = document.getElementById('excelRoleBadge');
                     elements.excelDimsBadge = document.getElementById('excelDimsBadge');
@@ -1620,6 +1632,56 @@
                     elements.excelPageSizeSelect = document.getElementById('excelPageSizeSelect');
                 }
                 return elements.excelPreviewModal;
+            }
+
+            Object.defineProperty(scope, 'excelSelection', {
+                get: () => excelSelection,
+                set: (val) => {
+                    excelSelection = val;
+                },
+                configurable: true
+            });
+
+            function getExcelSelection() {
+                return excelSelection;
+            }
+
+            function setExcelSelection(sel) {
+                excelSelection = sel;
+                updateExcelSelectionUI();
+                return excelSelection;
+            }
+
+            function getExcelBodyRows() {
+                if (!elements.excelTableBody) return [];
+                if (elements.excelTableBody.rows && elements.excelTableBody.rows.length > 0) {
+                    return elements.excelTableBody.rows;
+                }
+                const children = elements.excelTableBody.children || [];
+                if (children.length === 1 && children[0]?.id === 'fragment') {
+                    return children[0].children || [];
+                }
+                return children;
+            }
+
+            function getExcelHeadRows() {
+                if (!elements.excelTableHead) return [];
+                if (elements.excelTableHead.rows && elements.excelTableHead.rows.length > 0) {
+                    return elements.excelTableHead.rows;
+                }
+                const children = elements.excelTableHead.children || [];
+                if (children.length === 1 && children[0]?.id === 'fragment') {
+                    return children[0].children || [];
+                }
+                return children;
+            }
+
+            function getVisibleExcelRowCount() {
+                return getExcelBodyRows().length;
+            }
+
+            function getExcelTotalCols() {
+                return currentRawRows.reduce((max, r) => Math.max(max, r.length), 0);
             }
 
             function openExcelPreviewModal(file) {
@@ -1645,6 +1707,9 @@
                 currentRawRows = rows;
                 currentPreviewPage = 1;
                 currentSearchTerm = '';
+                excelSelection = { startRow: 0, startCol: 0, endRow: 0, endCol: 0 };
+                isSelectingExcelCells = false;
+
                 if (elements.excelSearchInput) {
                     elements.excelSearchInput.value = '';
                 }
@@ -1691,6 +1756,246 @@
                 currentPreviewFile = null;
                 currentRawRows = [];
                 currentFilteredIndices = [];
+                excelSelection = null;
+                isSelectingExcelCells = false;
+            }
+
+            function updateExcelSelectionUI() {
+                ensureExcelElements();
+                if (!elements.excelTableBody || !elements.excelTableHead) return;
+
+                const bodyRows = getExcelBodyRows();
+                const visibleRowsCount = bodyRows.length;
+                const totalCols = getExcelTotalCols();
+
+                // Clear previous cell selection classes
+                if (typeof elements.excelTableBody.querySelectorAll === 'function') {
+                    const prevSelected = elements.excelTableBody.querySelectorAll('.excel-cell-selected, .excel-cell-anchor, .excel-sel-top, .excel-sel-bottom, .excel-sel-left, .excel-sel-right');
+                    for (let i = 0; i < prevSelected.length; i++) {
+                        prevSelected[i].classList.remove('excel-cell-selected', 'excel-cell-anchor', 'excel-sel-top', 'excel-sel-bottom', 'excel-sel-left', 'excel-sel-right');
+                    }
+                }
+                if (elements.excelPreviewModal && typeof elements.excelPreviewModal.querySelectorAll === 'function') {
+                    const prevHeaders = elements.excelPreviewModal.querySelectorAll('.excel-header-selected');
+                    for (let i = 0; i < prevHeaders.length; i++) {
+                        prevHeaders[i].classList.remove('excel-header-selected');
+                    }
+                }
+
+                if (!excelSelection || visibleRowsCount === 0 || totalCols === 0) {
+                    if (elements.excelActiveCellAddress) elements.excelActiveCellAddress.textContent = '-';
+                    if (elements.excelFormulaValue) elements.excelFormulaValue.value = '';
+                    if (elements.excelSelectionCountBadge) elements.excelSelectionCountBadge.textContent = '0 cells';
+                    return;
+                }
+
+                const minR = Math.max(0, Math.min(excelSelection.startRow, excelSelection.endRow));
+                const maxR = Math.min(visibleRowsCount - 1, Math.max(excelSelection.startRow, excelSelection.endRow));
+                const minC = Math.max(0, Math.min(excelSelection.startCol, excelSelection.endCol));
+                const maxC = Math.min(totalCols - 1, Math.max(excelSelection.startCol, excelSelection.endCol));
+
+                for (let r = minR; r <= maxR; r++) {
+                    const row = bodyRows[r];
+                    if (!row) continue;
+                    const rowCells = row.cells || row.children || [];
+
+                    // Highlight row number
+                    if (rowCells[0] && rowCells[0].classList) {
+                        rowCells[0].classList.add('excel-header-selected');
+                    }
+
+                    for (let c = minC; c <= maxC; c++) {
+                        const cell = rowCells[c + 1];
+                        if (!cell || !cell.classList) continue;
+
+                        cell.classList.add('excel-cell-selected');
+
+                        if (r === excelSelection.startRow && c === excelSelection.startCol) {
+                            cell.classList.add('excel-cell-anchor');
+                        }
+
+                        if (r === minR) cell.classList.add('excel-sel-top');
+                        if (r === maxR) cell.classList.add('excel-sel-bottom');
+                        if (c === minC) cell.classList.add('excel-sel-left');
+                        if (c === maxC) cell.classList.add('excel-sel-right');
+                    }
+                }
+
+                // Highlight column letters
+                const headRows = getExcelHeadRows();
+                const letterRow = headRows[0];
+                if (letterRow) {
+                    const letterCells = letterRow.cells || letterRow.children || [];
+                    for (let c = minC; c <= maxC; c++) {
+                        const th = letterCells[c + 1];
+                        if (th && th.classList) th.classList.add('excel-header-selected');
+                    }
+                }
+
+                // Address Name Box
+                const startRowEl = bodyRows[excelSelection.startRow];
+                const startRowCells = startRowEl ? (startRowEl.cells || startRowEl.children || []) : [];
+                const startRowNumText = startRowCells[0] ? startRowCells[0].textContent : String(excelSelection.startRow + 1);
+
+                const activeColLetter = getColumnLetter(excelSelection.startCol);
+                const isSingleCell = (minR === maxR && minC === maxC);
+
+                if (elements.excelActiveCellAddress) {
+                    if (isSingleCell) {
+                        elements.excelActiveCellAddress.textContent = `${activeColLetter}${startRowNumText}`;
+                    } else {
+                        const minColLetter = getColumnLetter(minC);
+                        const maxColLetter = getColumnLetter(maxC);
+                        const minRowEl = bodyRows[minR];
+                        const minRowCells = minRowEl ? (minRowEl.cells || minRowEl.children || []) : [];
+                        const minRowNumText = minRowCells[0] ? minRowCells[0].textContent : String(minR + 1);
+
+                        const maxRowEl = bodyRows[maxR];
+                        const maxRowCells = maxRowEl ? (maxRowEl.cells || maxRowEl.children || []) : [];
+                        const maxRowNumText = maxRowCells[0] ? maxRowCells[0].textContent : String(maxR + 1);
+
+                        elements.excelActiveCellAddress.textContent = `${minColLetter}${minRowNumText}:${maxColLetter}${maxRowNumText}`;
+                    }
+                }
+
+                // Formula Bar value: active cell content (Read-only)
+                if (elements.excelFormulaValue) {
+                    const activeCell = startRowCells[excelSelection.startCol + 1];
+                    elements.excelFormulaValue.value = activeCell ? activeCell.textContent : '';
+                }
+
+                // Selection count badge
+                if (elements.excelSelectionCountBadge) {
+                    const rowsCount = maxR - minR + 1;
+                    const colsCount = maxC - minC + 1;
+                    const totalSelected = rowsCount * colsCount;
+                    if (totalSelected <= 1) {
+                        elements.excelSelectionCountBadge.textContent = '1 cell';
+                    } else {
+                        elements.excelSelectionCountBadge.textContent = `${totalSelected.toLocaleString()} cells (${rowsCount}R \u00D7 ${colsCount}C)`;
+                    }
+                }
+            }
+
+            function getSelectedExcelCellsAsTSV() {
+                ensureExcelElements();
+                const bodyRows = getExcelBodyRows();
+                const visibleRowsCount = bodyRows.length;
+                const totalCols = getExcelTotalCols();
+                if (!excelSelection || visibleRowsCount === 0 || totalCols === 0) return '';
+
+                const minR = Math.max(0, Math.min(excelSelection.startRow, excelSelection.endRow));
+                const maxR = Math.min(visibleRowsCount - 1, Math.max(excelSelection.startRow, excelSelection.endRow));
+                const minC = Math.max(0, Math.min(excelSelection.startCol, excelSelection.endCol));
+                const maxC = Math.min(totalCols - 1, Math.max(excelSelection.startCol, excelSelection.endCol));
+
+                const lines = [];
+                for (let r = minR; r <= maxR; r++) {
+                    const row = bodyRows[r];
+                    if (!row) continue;
+                    const rowCells = row.cells || row.children || [];
+                    const rowVals = [];
+                    for (let c = minC; c <= maxC; c++) {
+                        const cell = rowCells[c + 1];
+                        let val = cell ? cell.textContent : '';
+                        if (val.includes('\t') || val.includes('\n') || val.includes('\r') || val.includes('"')) {
+                            val = `"${val.replace(/"/g, '""')}"`;
+                        }
+                        rowVals.push(val);
+                    }
+                    lines.push(rowVals.join('\t'));
+                }
+                return lines.join('\r\n');
+            }
+
+            function showExcelToast(message) {
+                ensureExcelElements();
+                if (!elements.excelToast) return;
+                elements.excelToast.textContent = message;
+                elements.excelToast.classList.remove('hide');
+                elements.excelToast.classList.add('show');
+                clearTimeout(excelToastTimeout);
+                excelToastTimeout = setTimeout(() => {
+                    if (elements.excelToast) {
+                        elements.excelToast.classList.remove('show');
+                        elements.excelToast.classList.add('hide');
+                    }
+                }, 2500);
+            }
+
+            async function copySelectedExcelCells() {
+                ensureExcelElements();
+                const textToCopy = getSelectedExcelCellsAsTSV();
+                if (textToCopy === '' && (!excelSelection || getVisibleExcelRowCount() === 0)) {
+                    showExcelToast('No cells selected to copy.');
+                    return false;
+                }
+
+                const clipboardWriter = scope.writeTextToClipboard || (async (text) => {
+                    if (typeof navigator !== 'undefined' && navigator.clipboard?.writeText) {
+                        try {
+                            await navigator.clipboard.writeText(text);
+                            return true;
+                        } catch (_) {}
+                    }
+                    if (!document.body || typeof document.execCommand !== 'function') return false;
+                    const ta = document.createElement('textarea');
+                    ta.value = text;
+                    ta.setAttribute('readonly', '');
+                    ta.style.position = 'fixed';
+                    ta.style.left = '-9999px';
+                    document.body.appendChild(ta);
+                    ta.select();
+                    try {
+                        return document.execCommand('copy');
+                    } catch (_) {
+                        return false;
+                    } finally {
+                        ta.remove();
+                    }
+                });
+
+                const success = await clipboardWriter(textToCopy);
+
+                if (success) {
+                    if (elements.excelCopyBtn) {
+                        elements.excelCopyBtn.classList.add('copied');
+                        if (elements.excelCopyBtnText) {
+                            elements.excelCopyBtnText.textContent = '\u2713 Copied!';
+                        }
+                        clearTimeout(excelCopyBtnTimeout);
+                        excelCopyBtnTimeout = setTimeout(() => {
+                            if (elements.excelCopyBtn) elements.excelCopyBtn.classList.remove('copied');
+                            if (elements.excelCopyBtnText) elements.excelCopyBtnText.textContent = 'Copy Cells';
+                        }, 1800);
+                    }
+
+                    if (elements.excelTableBody && typeof elements.excelTableBody.querySelectorAll === 'function') {
+                        const selectedCells = elements.excelTableBody.querySelectorAll('.excel-cell-selected');
+                        for (let i = 0; i < selectedCells.length; i++) {
+                            const c = selectedCells[i];
+                            c.classList.remove('excel-cell-copied');
+                            void c.offsetWidth;
+                            c.classList.add('excel-cell-copied');
+                        }
+                    }
+
+                    const bodyRows = getExcelBodyRows();
+                    const visibleRowsCount = bodyRows.length;
+                    const totalCols = getExcelTotalCols();
+                    const minR = Math.max(0, Math.min(excelSelection.startRow, excelSelection.endRow));
+                    const maxR = Math.min(visibleRowsCount - 1, Math.max(excelSelection.startRow, excelSelection.endRow));
+                    const minC = Math.max(0, Math.min(excelSelection.startCol, excelSelection.endCol));
+                    const maxC = Math.min(totalCols - 1, Math.max(excelSelection.startCol, excelSelection.endCol));
+                    const cellCount = (maxR - minR + 1) * (maxC - minC + 1);
+                    const countLabel = cellCount === 1 ? '1 cell' : `${cellCount.toLocaleString()} cells`;
+
+                    showExcelToast(`\u2713 Copied ${countLabel} to clipboard! Ready to paste into Excel or Google Sheets.`);
+                    return true;
+                } else {
+                    showExcelToast('Could not copy cells. Allow clipboard permissions and try again.');
+                    return false;
+                }
             }
 
             function renderExcelTable() {
@@ -1711,12 +2016,16 @@
 
                 const cornerCell = document.createElement('th');
                 cornerCell.className = 'excel-corner-cell';
+                cornerCell.id = 'excelCornerCell';
+                cornerCell.title = 'Select all visible cells';
                 cornerCell.textContent = '';
                 letterRow.appendChild(cornerCell);
 
                 for (let c = 0; c < totalCols; c++) {
                     const th = document.createElement('th');
                     th.className = 'excel-col-letter';
+                    th.dataset.col = String(c);
+                    th.title = `Select Column ${getColumnLetter(c)}`;
                     th.textContent = getColumnLetter(c);
                     letterRow.appendChild(th);
                 }
@@ -1785,14 +2094,20 @@
                         const tr = document.createElement('tr');
                         tr.className = 'excel-data-row';
 
+                        const visibleRowIdx = i - startIndex;
+
                         const rowTh = document.createElement('th');
                         rowTh.className = 'excel-row-number';
+                        rowTh.dataset.row = String(visibleRowIdx);
+                        rowTh.title = `Select Row ${headerRowCount + dataRowIdx + 1}`;
                         rowTh.textContent = String(headerRowCount + dataRowIdx + 1);
                         tr.appendChild(rowTh);
 
                         for (let c = 0; c < totalCols; c++) {
                             const td = document.createElement('td');
                             td.className = 'excel-cell';
+                            td.dataset.r = String(visibleRowIdx);
+                            td.dataset.c = String(c);
                             const cellVal = rawRow[c] !== undefined && rawRow[c] !== null ? String(rawRow[c]) : '';
                             td.textContent = cellVal;
                             td.title = cellVal;
@@ -1834,6 +2149,20 @@
                 if (viewport) {
                     viewport.scrollTop = 0;
                 }
+
+                // 4. Update Selection UI
+                const visibleRowsCount = endIndex - startIndex;
+                if (visibleRowsCount === 0 || totalCols === 0) {
+                    excelSelection = null;
+                } else if (!excelSelection) {
+                    excelSelection = { startRow: 0, startCol: 0, endRow: 0, endCol: 0 };
+                } else {
+                    excelSelection.startRow = Math.max(0, Math.min(visibleRowsCount - 1, excelSelection.startRow));
+                    excelSelection.endRow = Math.max(0, Math.min(visibleRowsCount - 1, excelSelection.endRow));
+                    excelSelection.startCol = Math.max(0, Math.min(totalCols - 1, excelSelection.startCol));
+                    excelSelection.endCol = Math.max(0, Math.min(totalCols - 1, excelSelection.endCol));
+                }
+                updateExcelSelectionUI();
             }
 
             function filterExcelRows(term) {
@@ -1872,6 +2201,12 @@
                     elements.excelCloseBtn.addEventListener('click', closeExcelPreviewModal);
                 }
 
+                if (elements.excelCopyBtn) {
+                    elements.excelCopyBtn.addEventListener('click', () => {
+                        copySelectedExcelCells();
+                    });
+                }
+
                 if (elements.excelPreviewModal) {
                     elements.excelPreviewModal.addEventListener('click', (e) => {
                         if (e.target === elements.excelPreviewModal) {
@@ -1880,11 +2215,189 @@
                     });
                 }
 
-                document.addEventListener('keydown', (e) => {
-                    if (e.key === 'Escape' && elements.excelPreviewModal && !elements.excelPreviewModal.classList.contains('hide')) {
-                        closeExcelPreviewModal();
-                    }
-                });
+                // Table mouse interaction delegation (Cell selection & Drag)
+                const tableEl = elements.excelTable || (typeof document !== 'undefined' ? document.getElementById('excelTable') : null);
+                if (tableEl && typeof tableEl.addEventListener === 'function') {
+                    tableEl.addEventListener('mousedown', (e) => {
+                        const target = e.target;
+                        if (!target) return;
+
+                        // 1. Data cell clicked
+                        const cell = typeof target.closest === 'function' ? target.closest('td.excel-cell') : null;
+                        if (cell && cell.dataset) {
+                            const r = parseInt(cell.dataset.r, 10);
+                            const c = parseInt(cell.dataset.c, 10);
+                            if (!isNaN(r) && !isNaN(c)) {
+                                if (e.shiftKey && excelSelection) {
+                                    excelSelection.endRow = r;
+                                    excelSelection.endCol = c;
+                                } else {
+                                    excelSelection = { startRow: r, startCol: c, endRow: r, endCol: c };
+                                }
+                                isSelectingExcelCells = true;
+                                updateExcelSelectionUI();
+                                if (typeof e.preventDefault === 'function') {
+                                    e.preventDefault();
+                                }
+                            }
+                            return;
+                        }
+
+                        // 2. Row number header clicked -> select whole row
+                        const rowHdr = typeof target.closest === 'function' ? target.closest('th.excel-row-number') : null;
+                        if (rowHdr && rowHdr.dataset) {
+                            const r = parseInt(rowHdr.dataset.row, 10);
+                            const totalCols = getExcelTotalCols();
+                            if (!isNaN(r) && totalCols > 0) {
+                                if (e.shiftKey && excelSelection) {
+                                    excelSelection.endRow = r;
+                                    excelSelection.startCol = 0;
+                                    excelSelection.endCol = totalCols - 1;
+                                } else {
+                                    excelSelection = { startRow: r, startCol: 0, endRow: r, endCol: totalCols - 1 };
+                                }
+                                isSelectingExcelCells = false;
+                                updateExcelSelectionUI();
+                                if (typeof e.preventDefault === 'function') {
+                                    e.preventDefault();
+                                }
+                            }
+                            return;
+                        }
+
+                        // 3. Column letter header clicked -> select whole column
+                        const colHdr = typeof target.closest === 'function' ? target.closest('th.excel-col-letter') : null;
+                        if (colHdr && colHdr.dataset) {
+                            const c = parseInt(colHdr.dataset.col, 10);
+                            const visibleRowsCount = getVisibleExcelRowCount();
+                            if (!isNaN(c) && visibleRowsCount > 0) {
+                                if (e.shiftKey && excelSelection) {
+                                    excelSelection.endCol = c;
+                                    excelSelection.startRow = 0;
+                                    excelSelection.endRow = visibleRowsCount - 1;
+                                } else {
+                                    excelSelection = { startRow: 0, startCol: c, endRow: visibleRowsCount - 1, endCol: c };
+                                }
+                                isSelectingExcelCells = false;
+                                updateExcelSelectionUI();
+                                if (typeof e.preventDefault === 'function') {
+                                    e.preventDefault();
+                                }
+                            }
+                            return;
+                        }
+
+                        // 4. Corner cell clicked -> select all visible cells
+                        const cornerCell = typeof target.closest === 'function' ? target.closest('th.excel-corner-cell') : null;
+                        if (cornerCell) {
+                            const visibleRowsCount = getVisibleExcelRowCount();
+                            const totalCols = getExcelTotalCols();
+                            if (visibleRowsCount > 0 && totalCols > 0) {
+                                excelSelection = { startRow: 0, startCol: 0, endRow: visibleRowsCount - 1, endCol: totalCols - 1 };
+                                isSelectingExcelCells = false;
+                                updateExcelSelectionUI();
+                                if (typeof e.preventDefault === 'function') {
+                                    e.preventDefault();
+                                }
+                            }
+                            return;
+                        }
+                    });
+
+                    tableEl.addEventListener('mouseover', (e) => {
+                        if (!isSelectingExcelCells) return;
+                        const target = e.target;
+                        if (!target) return;
+                        const cell = typeof target.closest === 'function' ? target.closest('td.excel-cell') : null;
+                        if (cell && cell.dataset) {
+                            const r = parseInt(cell.dataset.r, 10);
+                            const c = parseInt(cell.dataset.c, 10);
+                            if (!isNaN(r) && !isNaN(c) && excelSelection) {
+                                if (excelSelection.endRow !== r || excelSelection.endCol !== c) {
+                                    excelSelection.endRow = r;
+                                    excelSelection.endCol = c;
+                                    updateExcelSelectionUI();
+                                }
+                            }
+                        }
+                    });
+                }
+
+                if (typeof document !== 'undefined' && typeof document.addEventListener === 'function') {
+                    document.addEventListener('mouseup', () => {
+                        isSelectingExcelCells = false;
+                    });
+
+                    document.addEventListener('keydown', (e) => {
+                        if (!elements.excelPreviewModal || (elements.excelPreviewModal.classList && elements.excelPreviewModal.classList.contains('hide'))) {
+                            return;
+                        }
+
+                        if (e.key === 'Escape') {
+                            closeExcelPreviewModal();
+                            return;
+                        }
+
+                        // Do not intercept if user is typing into search box
+                        if (document.activeElement === elements.excelSearchInput) {
+                            return;
+                        }
+
+                        // Ctrl+C or Cmd+C -> copy selected cells
+                        if ((e.ctrlKey || e.metaKey) && (e.key === 'c' || e.key === 'C')) {
+                            if (typeof e.preventDefault === 'function') e.preventDefault();
+                            copySelectedExcelCells();
+                            return;
+                        }
+
+                        // Ctrl+A or Cmd+A -> select all visible cells
+                        if ((e.ctrlKey || e.metaKey) && (e.key === 'a' || e.key === 'A')) {
+                            if (typeof e.preventDefault === 'function') e.preventDefault();
+                            const visibleRowsCount = getVisibleExcelRowCount();
+                            const totalCols = getExcelTotalCols();
+                            if (visibleRowsCount > 0 && totalCols > 0) {
+                                excelSelection = { startRow: 0, startCol: 0, endRow: visibleRowsCount - 1, endCol: totalCols - 1 };
+                                updateExcelSelectionUI();
+                            }
+                            return;
+                        }
+
+                        // Arrow keys navigation
+                        let dRow = 0;
+                        let dCol = 0;
+                        if (e.key === 'ArrowUp') dRow = -1;
+                        else if (e.key === 'ArrowDown') dRow = 1;
+                        else if (e.key === 'ArrowLeft') dCol = -1;
+                        else if (e.key === 'ArrowRight') dCol = 1;
+
+                        if (dRow !== 0 || dCol !== 0) {
+                            const visibleRowsCount = getVisibleExcelRowCount();
+                            const totalCols = getExcelTotalCols();
+                            if (visibleRowsCount > 0 && totalCols > 0) {
+                                if (typeof e.preventDefault === 'function') e.preventDefault();
+                                if (!excelSelection) {
+                                    excelSelection = { startRow: 0, startCol: 0, endRow: 0, endCol: 0 };
+                                } else if (e.shiftKey) {
+                                    excelSelection.endRow = Math.max(0, Math.min(visibleRowsCount - 1, excelSelection.endRow + dRow));
+                                    excelSelection.endCol = Math.max(0, Math.min(totalCols - 1, excelSelection.endCol + dCol));
+                                } else {
+                                    const nextR = Math.max(0, Math.min(visibleRowsCount - 1, excelSelection.endRow + dRow));
+                                    const nextC = Math.max(0, Math.min(totalCols - 1, excelSelection.endCol + dCol));
+                                    excelSelection = { startRow: nextR, startCol: nextC, endRow: nextR, endCol: nextC };
+                                }
+                                updateExcelSelectionUI();
+
+                                const bodyRows = getExcelBodyRows();
+                                const activeRow = bodyRows[excelSelection.endRow];
+                                const activeCells = activeRow ? (activeRow.cells || activeRow.children || []) : [];
+                                const targetCell = activeCells[excelSelection.endCol + 1];
+                                if (targetCell && typeof targetCell.scrollIntoView === 'function') {
+                                    targetCell.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+                                }
+                            }
+                        }
+                    });
+                }
 
                 if (elements.excelDownloadBtn) {
                     elements.excelDownloadBtn.addEventListener('click', () => {
@@ -1953,6 +2466,11 @@
         Object.assign(scope, {
         openExcelPreviewModal,
         closeExcelPreviewModal,
+        copySelectedExcelCells,
+        getSelectedExcelCellsAsTSV,
+        updateExcelSelectionUI,
+        getExcelSelection,
+        setExcelSelection,
         downloadCsvFile,
         loadDemoDatasets,
         initializeApp,
@@ -2000,6 +2518,61 @@
         Object.assign(App, {
         openExcelPreviewModal,
         closeExcelPreviewModal,
+        copySelectedExcelCells,
+        getSelectedExcelCellsAsTSV,
+        updateExcelSelectionUI,
+        getExcelSelection,
+        setExcelSelection,
+        downloadCsvFile,
+        loadDemoDatasets,
+        initializeApp,
+        bindSourceManagement,
+        renderFileList,
+        getSourceValidationLabel,
+        buildUploadSuccessMessage,
+        buildRejectedUploadMessage,
+        isStorageQuotaError,
+        getSourceDiagnostics,
+        getValidationParsedInfo,
+        getSourceRoleWarning,
+        headerMatchesField,
+        getParsedFileInfo,
+        parseStandardSourceFile,
+        parseNewHireSourceFile,
+        countUsableHeaders,
+        saveFiles,
+        readStoredFiles,
+        writeStoredFiles,
+        clearStoredFiles,
+        openDatabase,
+        readLegacyStoredFiles,
+        normalizeStoredFile,
+        createSourceId,
+        detectSourceKindByName,
+        getEffectiveSourceKind,
+        getSourceReplacementIndexes,
+        getAccountabilitySourceConfig,
+        getMatchKindForForm,
+        getMatchKindForAllowedKinds,
+        getParsedSourcesForKinds,
+        isSourceKindAllowedForForm,
+        isSourceKindQueryableForForm,
+        getPrimaryKindsForForm,
+        getMissingSourceMessage,
+        getMissingRequiredSourcesMessage,
+        dedupeParsedSourcesByCanonicalName,
+        getParsedRows,
+        getParsedRowsWithMultiHeader,
+        buildCompositeHeaders,
+        mapRowToHeaders,
+        mapNewHireRowToHeaders
+        });
+        Object.assign(App, {
+        openExcelPreviewModal,
+        closeExcelPreviewModal,
+        copySelectedExcelCells,
+        getSelectedExcelCellsAsTSV,
+        updateExcelSelectionUI,
         downloadCsvFile,
         loadDemoDatasets,
         initializeApp,
