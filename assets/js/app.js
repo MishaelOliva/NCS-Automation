@@ -12,6 +12,7 @@
         bindMirroredFields();
         bindDateInputs();
         bindAssigneeNameAutosize();
+        bindTestDeviceImeiAutosize();
         bindTextareaAutoResize();
         bindSourceManagement();
         bindReturnSanSheetCopy();
