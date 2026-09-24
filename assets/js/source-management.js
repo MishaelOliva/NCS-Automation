@@ -329,11 +329,34 @@
                     validationMessage.className = 'source-validation-message';
                     validationMessage.textContent = diagnostics.blockingErrors[0] || diagnostics.warnings[0] || 'Headers and row count look usable.';
 
+                    const cardActions = document.createElement('div');
+                    cardActions.className = 'source-card-actions';
+
+                    const cardPreviewBtn = document.createElement('button');
+                    cardPreviewBtn.type = 'button';
+                    cardPreviewBtn.className = 'btn-source-pill btn-source-pill-preview';
+                    cardPreviewBtn.setAttribute('data-action', 'preview-source');
+                    cardPreviewBtn.setAttribute('data-file-id', file.id);
+                    cardPreviewBtn.title = `Preview ${file.name} in Excel view`;
+                    cardPreviewBtn.innerHTML = '<svg class="icon-svg" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line><line x1="3" y1="15" x2="21" y2="15"></line><line x1="9" y1="3" x2="9" y2="21"></line><line x1="15" y1="3" x2="15" y2="21"></line></svg><span>Preview in Excel</span>';
+
+                    const cardDownloadBtn = document.createElement('button');
+                    cardDownloadBtn.type = 'button';
+                    cardDownloadBtn.className = 'btn-source-pill btn-source-pill-download';
+                    cardDownloadBtn.setAttribute('data-action', 'download-source');
+                    cardDownloadBtn.setAttribute('data-file-id', file.id);
+                    cardDownloadBtn.title = `Download ${file.name}`;
+                    cardDownloadBtn.innerHTML = '<svg class="icon-svg" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg><span>Download CSV</span>';
+
+                    cardActions.appendChild(cardPreviewBtn);
+                    cardActions.appendChild(cardDownloadBtn);
+
                     meta.appendChild(sourceName);
                     meta.appendChild(rowCountLabel);
                     meta.appendChild(roleRow);
                     meta.appendChild(detectedLabel);
                     meta.appendChild(validationMessage);
+                    meta.appendChild(cardActions);
 
                     const actions = document.createElement('div');
                     actions.className = 'source-actions';
@@ -345,9 +368,7 @@
                     previewButton.setAttribute('data-file-id', file.id);
                     previewButton.setAttribute('aria-label', `Preview ${file.name} in Excel view`);
                     previewButton.title = 'Preview in Excel view';
-                    const previewIcon = document.createElement('i');
-                    previewIcon.className = 'fa-solid fa-table-cells';
-                    previewButton.appendChild(previewIcon);
+                    previewButton.innerHTML = '<svg class="icon-svg" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line><line x1="3" y1="15" x2="21" y2="15"></line><line x1="9" y1="3" x2="9" y2="21"></line><line x1="15" y1="3" x2="15" y2="21"></line></svg>';
                     actions.appendChild(previewButton);
 
                     const downloadButton = document.createElement('button');
@@ -357,21 +378,17 @@
                     downloadButton.setAttribute('data-file-id', file.id);
                     downloadButton.setAttribute('aria-label', `Download ${file.name}`);
                     downloadButton.title = 'Download CSV file';
-                    const downloadIcon = document.createElement('i');
-                    downloadIcon.className = 'fa-solid fa-download';
-                    downloadButton.appendChild(downloadIcon);
+                    downloadButton.innerHTML = '<svg class="icon-svg" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>';
                     actions.appendChild(downloadButton);
 
                     const removeButton = document.createElement('button');
                     removeButton.type = 'button';
-                    removeButton.className = 'btn-icon';
+                    removeButton.className = 'btn-icon btn-remove';
                     removeButton.setAttribute('data-action', 'remove-source');
                     removeButton.setAttribute('data-file-id', file.id);
                     removeButton.setAttribute('aria-label', `Remove ${file.name}`);
-
-                    const removeIcon = document.createElement('i');
-                    removeIcon.className = 'fa-solid fa-trash';
-                    removeButton.appendChild(removeIcon);
+                    removeButton.title = `Remove ${file.name}`;
+                    removeButton.innerHTML = '<svg class="icon-svg" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>';
                     actions.appendChild(removeButton);
 
                     item.appendChild(meta);
