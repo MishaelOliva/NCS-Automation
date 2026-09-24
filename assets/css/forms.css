@@ -772,31 +772,31 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 }
 
 .tda-details-table th:nth-child(1) {
-    width: 4.5%;
+    width: 4%;
 }
 
 .tda-details-table th:nth-child(2) {
-    width: 9.5%;
+    width: 9%;
 }
 
 .tda-details-table th:nth-child(3) {
-    width: 12%;
+    width: 11%;
 }
 
 .tda-details-table th:nth-child(4) {
-    width: 27%;
+    width: 23%;
 }
 
 .tda-details-table th:nth-child(5) {
-    width: 16%;
+    width: 15%;
 }
 
 .tda-details-table th:nth-child(6) {
-    width: 17%;
+    width: 21%;
 }
 
 .tda-details-table th:nth-child(7) {
-    width: 14%;
+    width: 17%;
 }
 
 .tda-details-table td {
@@ -842,7 +842,23 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     box-sizing: border-box;
 }
 
-input[id^="f_tdaImei"],
+#template-test-device-accountability .ncs-details-table td:nth-child(6),
+.tda-details-table td:nth-child(6) {
+    padding-left: 2px;
+    padding-right: 2px;
+}
+
+input[id^="f_tdaImei"] {
+    font-size: 0.74rem;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.02em;
+    padding: 0 1px;
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+    text-align: center;
+}
+
 input[id^="f_tdaSerial"],
 input[id^="f_tdaAssetTag"] {
     font-size: 0.76rem;
@@ -1273,31 +1289,31 @@ input[id^="f_tdaAssetTag"] {
 }
 
 #template-test-device-accountability .ncs-details-table th:nth-child(1) {
-    width: 4.5%;
+    width: 4%;
 }
 
 #template-test-device-accountability .ncs-details-table th:nth-child(2) {
-    width: 9.5%;
+    width: 9%;
 }
 
 #template-test-device-accountability .ncs-details-table th:nth-child(3) {
-    width: 12%;
+    width: 11%;
 }
 
 #template-test-device-accountability .ncs-details-table th:nth-child(4) {
-    width: 27%;
+    width: 23%;
 }
 
 #template-test-device-accountability .ncs-details-table th:nth-child(5) {
-    width: 16%;
+    width: 15%;
 }
 
 #template-test-device-accountability .ncs-details-table th:nth-child(6) {
-    width: 17%;
+    width: 21%;
 }
 
 #template-test-device-accountability .ncs-details-table th:nth-child(7) {
-    width: 14%;
+    width: 17%;
 }
 
 .ncs-sanitization-table th:nth-child(1) {

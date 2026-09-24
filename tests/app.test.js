@@ -2230,27 +2230,37 @@ test('supports Excel cell selection, TSV clipboard copy, and strictly read-only 
 test('rebalances table columns and prevents numeric IMEI and asset tag overflow', () => {
     const formsCss = fs.readFileSync(path.join(__dirname, '..', 'assets', 'css', 'forms.css'), 'utf8');
     const printCss = fs.readFileSync(path.join(__dirname, '..', 'assets', 'css', 'print.css'), 'utf8');
+    const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+    const helpersJs = fs.readFileSync(path.join(__dirname, '..', 'assets', 'js', 'helpers.js'), 'utf8');
 
     // Test Device Accountability column widths in forms.css
-    assert.match(formsCss, /#template-test-device-accountability \.ncs-details-table th:nth-child\(1\)\s*\{\s*width:\s*4\.5%;/);
-    assert.match(formsCss, /#template-test-device-accountability \.ncs-details-table th:nth-child\(2\)\s*\{\s*width:\s*9\.5%;/);
-    assert.match(formsCss, /#template-test-device-accountability \.ncs-details-table th:nth-child\(3\)\s*\{\s*width:\s*12%;/);
-    assert.match(formsCss, /#template-test-device-accountability \.ncs-details-table th:nth-child\(4\)\s*\{\s*width:\s*27%;/);
-    assert.match(formsCss, /#template-test-device-accountability \.ncs-details-table th:nth-child\(5\)\s*\{\s*width:\s*16%;/);
-    assert.match(formsCss, /#template-test-device-accountability \.ncs-details-table th:nth-child\(6\)\s*\{\s*width:\s*17%;/);
-    assert.match(formsCss, /#template-test-device-accountability \.ncs-details-table th:nth-child\(7\)\s*\{\s*width:\s*14%;/);
+    assert.match(formsCss, /#template-test-device-accountability \.ncs-details-table th:nth-child\(1\)\s*\{\s*width:\s*4%;/);
+    assert.match(formsCss, /#template-test-device-accountability \.ncs-details-table th:nth-child\(2\)\s*\{\s*width:\s*9%;/);
+    assert.match(formsCss, /#template-test-device-accountability \.ncs-details-table th:nth-child\(3\)\s*\{\s*width:\s*11%;/);
+    assert.match(formsCss, /#template-test-device-accountability \.ncs-details-table th:nth-child\(4\)\s*\{\s*width:\s*23%;/);
+    assert.match(formsCss, /#template-test-device-accountability \.ncs-details-table th:nth-child\(5\)\s*\{\s*width:\s*15%;/);
+    assert.match(formsCss, /#template-test-device-accountability \.ncs-details-table th:nth-child\(6\)\s*\{\s*width:\s*21%;/);
+    assert.match(formsCss, /#template-test-device-accountability \.ncs-details-table th:nth-child\(7\)\s*\{\s*width:\s*17%;/);
 
     // Sum of columns in Test Device table is exactly 100%
-    const tdaSum = 4.5 + 9.5 + 12 + 27 + 16 + 17 + 14;
+    const tdaSum = 4 + 9 + 11 + 23 + 15 + 21 + 17;
     assert.equal(tdaSum, 100);
 
     // Test Device Accountability column widths in print.css
-    assert.match(printCss, /#template-test-device-accountability \.ncs-details-table th:nth-child\(6\)\s*\{\s*width:\s*17%\s*!important;/);
-    assert.match(printCss, /#template-test-device-accountability \.ncs-details-table th:nth-child\(4\)\s*\{\s*width:\s*27%\s*!important;/);
+    assert.match(printCss, /#template-test-device-accountability \.ncs-details-table th:nth-child\(6\)\s*\{\s*width:\s*21%\s*!important;/);
+    assert.match(printCss, /#template-test-device-accountability \.ncs-details-table th:nth-child\(4\)\s*\{\s*width:\s*23%\s*!important;/);
 
     // Multi-row IMEI / Serial / Asset Tag input fit styling
-    assert.match(formsCss, /input\[id\^="f_tdaImei"\],\s*input\[id\^="f_tdaSerial"\],\s*input\[id\^="f_tdaAssetTag"\]\s*\{[\s\S]*?font-size:\s*0\.76rem;/);
-    assert.match(printCss, /#template-test-device-accountability input\[id\^="f_tdaImei"\][\s\S]*?font-size:\s*0\.72rem\s*!important;/);
+    assert.match(formsCss, /input\[id\^="f_tdaImei"\]\s*\{[\s\S]*?font-size:\s*0\.74rem;/);
+    assert.match(printCss, /#template-test-device-accountability input\[id\^="f_tdaImei"\][\s\S]*?font-size:\s*0\.70rem\s*!important;/);
+
+    // Cache-busting query strings in index.html ensure clients receive fresh styles
+    assert.match(indexHtml, /href="assets\/css\/forms\.css\?v=20260924imeifix2"/);
+    assert.match(indexHtml, /href="assets\/css\/print\.css\?v=20260924imeifix2"/);
+
+    // Dynamic JS font fitting for long/dual IMEIs
+    assert.match(helpersJs, /function fitTestDeviceImeiInput/);
+    assert.match(helpersJs, /function bindTestDeviceImeiAutosize/);
 
     // Asset tag width expanded to 9-10% across accountability, sanitization, and return tables
     assert.match(formsCss, /#template-accountability \.ncs-details-table th:nth-child\(3\)\s*\{\s*width:\s*9%;/);

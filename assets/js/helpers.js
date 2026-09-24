@@ -254,13 +254,47 @@
             }
 
 
+            function fitTestDeviceImeiInput(element) {
+                if (!element) return;
+                const len = (element.value || '').trim().length;
+                if (len > 25) {
+                    element.style.fontSize = '0.55rem';
+                    element.style.letterSpacing = '-0.03em';
+                } else if (len > 18) {
+                    element.style.fontSize = '0.62rem';
+                    element.style.letterSpacing = '-0.02em';
+                } else if (len > 15) {
+                    element.style.fontSize = '0.68rem';
+                    element.style.letterSpacing = '-0.015em';
+                } else {
+                    element.style.fontSize = '';
+                    element.style.letterSpacing = '';
+                }
+            }
+
+            function bindTestDeviceImeiAutosize() {
+                if (typeof document === 'undefined') {
+                    return;
+                }
+                if (document.body && document.body.dataset.tdaImeiBound === 'true') {
+                    return;
+                }
+                if (document.body) {
+                    document.body.dataset.tdaImeiBound = 'true';
+                }
+                document.addEventListener('input', (event) => {
+                    if (event.target && event.target.id && event.target.id.startsWith('f_tdaImei')) {
+                        fitTestDeviceImeiInput(event.target);
+                    }
+                });
+            }
+
             function setTextContent(id, value) {
                 const element = document.getElementById(id);
                 if (element) {
                     element.textContent = value || '';
                 }
             }
-
 
             function setInputValue(id, value) {
                 const element = document.getElementById(id);
@@ -274,6 +308,9 @@
                 }
                 if (id === 'f_sigEmpName' || id === 'f_issuedName') {
                     resizeAssigneeNameInput(element);
+                }
+                if (id && id.startsWith('f_tdaImei')) {
+                    fitTestDeviceImeiInput(element);
                 }
                 if (typeof scope.syncSignerPickerValue === 'function') {
                     scope.syncSignerPickerValue(element);
@@ -732,6 +769,8 @@
         measureTextWidth,
         resizeAssigneeNameInput,
         bindAssigneeNameAutosize,
+        fitTestDeviceImeiInput,
+        bindTestDeviceImeiAutosize,
         setTextContent,
         setInputValue,
         sanitizeCellValue,
@@ -791,6 +830,8 @@
         measureTextWidth,
         resizeAssigneeNameInput,
         bindAssigneeNameAutosize,
+        fitTestDeviceImeiInput,
+        bindTestDeviceImeiAutosize,
         setTextContent,
         setInputValue,
         sanitizeCellValue,
