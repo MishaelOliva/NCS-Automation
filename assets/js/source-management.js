@@ -150,7 +150,38 @@
                     }
                 });
 
+                if (elements.loadDemoDataBtn) {
+                    elements.loadDemoDataBtn.addEventListener('click', async () => {
+                        await initPromise;
+                        await loadDemoDatasets();
+                    });
+                }
+
+                bindExcelModalEvents();
+
                 elements.gsheetList.addEventListener('click', async (event) => {
+                    const previewButton = event.target.closest('[data-action="preview-source"]');
+                    if (previewButton) {
+                        await initPromise;
+                        const fileId = previewButton.getAttribute('data-file-id');
+                        const targetFile = csvFiles.find((file) => file.id === fileId);
+                        if (targetFile) {
+                            openExcelPreviewModal(targetFile);
+                        }
+                        return;
+                    }
+
+                    const downloadButton = event.target.closest('[data-action="download-source"]');
+                    if (downloadButton) {
+                        await initPromise;
+                        const fileId = downloadButton.getAttribute('data-file-id');
+                        const targetFile = csvFiles.find((file) => file.id === fileId);
+                        if (targetFile) {
+                            downloadCsvFile(targetFile.name, targetFile.content);
+                        }
+                        return;
+                    }
+
                     const removeButton = event.target.closest('[data-action="remove-source"]');
                     if (!removeButton) {
                         return;
@@ -306,6 +337,30 @@
 
                     const actions = document.createElement('div');
                     actions.className = 'source-actions';
+
+                    const previewButton = document.createElement('button');
+                    previewButton.type = 'button';
+                    previewButton.className = 'btn-icon btn-preview';
+                    previewButton.setAttribute('data-action', 'preview-source');
+                    previewButton.setAttribute('data-file-id', file.id);
+                    previewButton.setAttribute('aria-label', `Preview ${file.name} in Excel view`);
+                    previewButton.title = 'Preview in Excel view';
+                    const previewIcon = document.createElement('i');
+                    previewIcon.className = 'fa-solid fa-table-cells';
+                    previewButton.appendChild(previewIcon);
+                    actions.appendChild(previewButton);
+
+                    const downloadButton = document.createElement('button');
+                    downloadButton.type = 'button';
+                    downloadButton.className = 'btn-icon btn-download';
+                    downloadButton.setAttribute('data-action', 'download-source');
+                    downloadButton.setAttribute('data-file-id', file.id);
+                    downloadButton.setAttribute('aria-label', `Download ${file.name}`);
+                    downloadButton.title = 'Download CSV file';
+                    const downloadIcon = document.createElement('i');
+                    downloadIcon.className = 'fa-solid fa-download';
+                    downloadButton.appendChild(downloadIcon);
+                    actions.appendChild(downloadButton);
 
                     const removeButton = document.createElement('button');
                     removeButton.type = 'button';
@@ -1396,7 +1451,476 @@
                 return row;
             }
 
+
+            async function loadDemoDatasets() {
+                clearAlerts();
+                setBusyState('upload', true);
+
+                try {
+                    const demoFilePaths = [
+                        'assets/demo-data/ITSM Asset Master Tracker - Sanitized Masterdata (FAR August).csv',
+                        'assets/demo-data/ITSM - Task Assignment - Original File - RELEASING_UPDATED.csv',
+                        'assets/demo-data/Newly Hired Attendance - IT - April 2026.csv',
+                        'assets/demo-data/TEST DEVICE 2025 - MONITORING.csv'
+                    ];
+
+                    const nextFiles = csvFiles.map((file) => normalizeStoredFile(file));
+                    const savedSources = [];
+                    const replacements = [];
+                    const rejectedFiles = [];
+
+                    for (const filePath of demoFilePaths) {
+                        let content = '';
+                        const fileName = filePath.split('/').pop();
+
+                        try {
+                            const resp = await fetch(filePath);
+                            if (!resp.ok) {
+                                throw new Error('HTTP ' + resp.status);
+                            }
+                            content = await resp.text();
+                        } catch (err) {
+                            console.warn('Could not fetch demo file ' + filePath + ':', err);
+                            rejectedFiles.push(`${fileName}: failed to load demo file.`);
+                            continue;
+                        }
+
+                        const incomingSource = normalizeStoredFile({
+                            id: createSourceId(),
+                            name: fileName,
+                            content,
+                            kind: SOURCE_KIND.AUTO,
+                            createdAt: Date.now(),
+                            updatedAt: Date.now()
+                        });
+                        const incomingDiagnostics = getSourceDiagnostics(incomingSource);
+                        if (incomingDiagnostics.validationState === SOURCE_VALIDATION_STATE.INVALID) {
+                            rejectedFiles.push(`${fileName}: ${incomingDiagnostics.blockingErrors[0]}`);
+                            deleteSourceCaches(incomingSource.id);
+                            continue;
+                        }
+
+                        const replacementIndexes = getSourceReplacementIndexes(nextFiles, incomingSource);
+                        const existingIndex = replacementIndexes[0] ?? -1;
+                        const previousSource = existingIndex >= 0 ? nextFiles[existingIndex] : null;
+                        const previousDiagnostics = previousSource ? getSourceDiagnostics(previousSource) : null;
+                        const validationSource = normalizeStoredFile({
+                            ...(previousSource || {}),
+                            id: incomingSource.id,
+                            name: fileName,
+                            content,
+                            kind: previousSource ? previousSource.kind : SOURCE_KIND.AUTO,
+                            createdAt: previousSource ? previousSource.createdAt : incomingSource.createdAt,
+                            updatedAt: Date.now()
+                        });
+                        const sourceIsUnchanged = previousSource
+                            && previousSource.name === validationSource.name
+                            && previousSource.content === validationSource.content
+                            && previousSource.kind === validationSource.kind;
+                        const nextDiagnostics = sourceIsUnchanged
+                            ? previousDiagnostics
+                            : getSourceDiagnostics(validationSource);
+
+                        const nextSource = normalizeStoredFile({
+                            ...validationSource,
+                            id: previousSource ? previousSource.id : validationSource.id
+                        });
+                        if (sourceIsUnchanged) {
+                            deleteSourceCaches(validationSource.id);
+                        } else {
+                            moveSourceCaches(validationSource.id, nextSource.id);
+                        }
+                        if (replacementIndexes.length) {
+                            nextFiles[existingIndex] = nextSource;
+                            replacementIndexes
+                                .slice(1)
+                                .sort((left, right) => right - left)
+                                .forEach((duplicateIndex) => nextFiles.splice(duplicateIndex, 1));
+                            replacements.push({
+                                name: fileName,
+                                oldRowCount: previousDiagnostics ? previousDiagnostics.rowCount : 0,
+                                newRowCount: nextDiagnostics.rowCount
+                            });
+                        } else {
+                            nextFiles.push(nextSource);
+                        }
+
+                        savedSources.push({
+                            file: nextSource,
+                            diagnostics: nextDiagnostics
+                        });
+                    }
+
+                    if (savedSources.length) {
+                        pruneSourceCaches(nextFiles);
+                        await writeStoredFiles(nextFiles, true);
+                        csvFiles = nextFiles;
+                        showSuccess(buildUploadSuccessMessage(savedSources, replacements));
+                    }
+
+                    if (rejectedFiles.length) {
+                        showError(buildRejectedUploadMessage(rejectedFiles));
+                    }
+                } catch (error) {
+                    console.error('Failed to load demo files:', error);
+                    showError('Failed to load sample demo datasets.');
+                } finally {
+                    renderFileList();
+                    setBusyState('upload', false);
+                }
+            }
+
+            let currentPreviewFile = null;
+            let currentRawRows = [];
+            let currentFilteredIndices = [];
+            let currentPreviewPage = 1;
+            let currentPreviewPageSize = 100;
+            let currentSearchTerm = '';
+            let excelEventsBound = false;
+
+            function getColumnLetter(colIndex) {
+                let temp = colIndex + 1;
+                let letter = '';
+                while (temp > 0) {
+                    let mod = (temp - 1) % 26;
+                    letter = String.fromCharCode(65 + mod) + letter;
+                    temp = Math.floor((temp - mod) / 26);
+                }
+                return letter;
+            }
+
+            function downloadCsvFile(fileName, content) {
+                try {
+                    const blob = new Blob(['\uFEFF' + content], { type: 'text/csv;charset=utf-8;' });
+                    const url = URL.createObjectURL(blob);
+                    const link = document.createElement('a');
+                    link.href = url;
+                    link.setAttribute('download', fileName || 'dataset.csv');
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                    setTimeout(() => URL.revokeObjectURL(url), 1000);
+                } catch (err) {
+                    console.error('Download CSV failed:', err);
+                }
+            }
+
+            function openExcelPreviewModal(file) {
+                if (!elements.excelPreviewModal) return;
+                currentPreviewFile = file;
+
+                const parsed = Papa.parse(file.content, { header: false, skipEmptyLines: false });
+                let rows = parsed.data || [];
+                while (rows.length > 0 && rows[rows.length - 1].every(cell => !cell || String(cell).trim() === '')) {
+                    rows.pop();
+                }
+                currentRawRows = rows;
+                currentPreviewPage = 1;
+                currentSearchTerm = '';
+                if (elements.excelSearchInput) {
+                    elements.excelSearchInput.value = '';
+                }
+                if (elements.excelSearchClearBtn) {
+                    elements.excelSearchClearBtn.classList.add('hide');
+                }
+
+                if (elements.excelModalTitle) {
+                    elements.excelModalTitle.textContent = file.name;
+                }
+                const effectiveKind = getEffectiveSourceKind(file);
+                if (elements.excelRoleBadge) {
+                    elements.excelRoleBadge.textContent = SOURCE_KIND_LABELS[effectiveKind] || 'CSV Source';
+                }
+
+                const isNewHire = effectiveKind === SOURCE_KIND.NEW_HIRE && currentRawRows.length >= 2;
+                const headerRowCount = isNewHire ? 2 : 1;
+                const totalDataRows = Math.max(0, currentRawRows.length - headerRowCount);
+                const totalCols = currentRawRows.reduce((max, r) => Math.max(max, r.length), 0);
+
+                if (elements.excelDimsBadge) {
+                    elements.excelDimsBadge.textContent = `${totalDataRows.toLocaleString()} rows × ${totalCols} cols`;
+                }
+
+                currentFilteredIndices = [];
+                for (let i = 0; i < totalDataRows; i++) {
+                    currentFilteredIndices.push(i);
+                }
+
+                renderExcelTable();
+                elements.excelPreviewModal.classList.remove('hide');
+                document.body.classList.add('excel-modal-open');
+            }
+
+            function closeExcelPreviewModal() {
+                if (!elements.excelPreviewModal) return;
+                elements.excelPreviewModal.classList.add('hide');
+                document.body.classList.remove('excel-modal-open');
+                currentPreviewFile = null;
+                currentRawRows = [];
+                currentFilteredIndices = [];
+            }
+
+            function renderExcelTable() {
+                if (!elements.excelTableHead || !elements.excelTableBody) return;
+
+                const effectiveKind = currentPreviewFile ? getEffectiveSourceKind(currentPreviewFile) : SOURCE_KIND.GENERAL;
+                const isNewHire = effectiveKind === SOURCE_KIND.NEW_HIRE && currentRawRows.length >= 2;
+                const headerRowCount = isNewHire ? 2 : 1;
+                const totalDataRows = Math.max(0, currentRawRows.length - headerRowCount);
+                const totalCols = currentRawRows.reduce((max, r) => Math.max(max, r.length), 0);
+
+                // 1. Build Thead
+                elements.excelTableHead.replaceChildren();
+
+                // Top row: Column Letters (A, B, C...)
+                const letterRow = document.createElement('tr');
+                letterRow.className = 'excel-col-header-row';
+
+                const cornerCell = document.createElement('th');
+                cornerCell.className = 'excel-corner-cell';
+                cornerCell.textContent = '';
+                letterRow.appendChild(cornerCell);
+
+                for (let c = 0; c < totalCols; c++) {
+                    const th = document.createElement('th');
+                    th.className = 'excel-col-letter';
+                    th.textContent = getColumnLetter(c);
+                    letterRow.appendChild(th);
+                }
+                elements.excelTableHead.appendChild(letterRow);
+
+                // Header Titles Row 1
+                const titleRow1 = document.createElement('tr');
+                titleRow1.className = 'excel-title-header-row';
+                const rowIdxHdr1 = document.createElement('th');
+                rowIdxHdr1.className = 'excel-row-idx-hdr';
+                rowIdxHdr1.textContent = '1';
+                titleRow1.appendChild(rowIdxHdr1);
+
+                const row0 = currentRawRows[0] || [];
+                for (let c = 0; c < totalCols; c++) {
+                    const th = document.createElement('th');
+                    const val = row0[c] || '';
+                    th.textContent = val;
+                    th.title = val;
+                    titleRow1.appendChild(th);
+                }
+                elements.excelTableHead.appendChild(titleRow1);
+
+                // If New Hire, Header Titles Row 2
+                if (isNewHire) {
+                    const titleRow2 = document.createElement('tr');
+                    titleRow2.className = 'excel-title-header-row';
+                    titleRow2.style.top = '47px';
+                    const rowIdxHdr2 = document.createElement('th');
+                    rowIdxHdr2.className = 'excel-row-idx-hdr';
+                    rowIdxHdr2.textContent = '2';
+                    titleRow2.appendChild(rowIdxHdr2);
+
+                    const row1 = currentRawRows[1] || [];
+                    for (let c = 0; c < totalCols; c++) {
+                        const th = document.createElement('th');
+                        const val = row1[c] || '';
+                        th.textContent = val;
+                        th.title = val;
+                        titleRow2.appendChild(th);
+                    }
+                    elements.excelTableHead.appendChild(titleRow2);
+                }
+
+                // 2. Build Tbody (Paginated)
+                elements.excelTableBody.replaceChildren();
+
+                const totalFiltered = currentFilteredIndices.length;
+                const totalPages = Math.max(1, Math.ceil(totalFiltered / currentPreviewPageSize));
+                if (currentPreviewPage > totalPages) {
+                    currentPreviewPage = totalPages;
+                }
+
+                const startIndex = (currentPreviewPage - 1) * currentPreviewPageSize;
+                const endIndex = Math.min(startIndex + currentPreviewPageSize, totalFiltered);
+
+                if (totalFiltered === 0) {
+                    if (elements.excelEmptyState) elements.excelEmptyState.classList.remove('hide');
+                } else {
+                    if (elements.excelEmptyState) elements.excelEmptyState.classList.add('hide');
+
+                    const frag = document.createDocumentFragment();
+                    for (let i = startIndex; i < endIndex; i++) {
+                        const dataRowIdx = currentFilteredIndices[i];
+                        const rawRow = currentRawRows[headerRowCount + dataRowIdx] || [];
+                        const tr = document.createElement('tr');
+                        tr.className = 'excel-data-row';
+
+                        const rowTh = document.createElement('th');
+                        rowTh.className = 'excel-row-number';
+                        rowTh.textContent = String(headerRowCount + dataRowIdx + 1);
+                        tr.appendChild(rowTh);
+
+                        for (let c = 0; c < totalCols; c++) {
+                            const td = document.createElement('td');
+                            td.className = 'excel-cell';
+                            const cellVal = rawRow[c] !== undefined && rawRow[c] !== null ? String(rawRow[c]) : '';
+                            td.textContent = cellVal;
+                            td.title = cellVal;
+                            tr.appendChild(td);
+                        }
+                        frag.appendChild(tr);
+                    }
+                    elements.excelTableBody.appendChild(frag);
+                }
+
+                // 3. Update Footer
+                if (elements.excelRowRangeInfo) {
+                    if (totalFiltered === 0) {
+                        elements.excelRowRangeInfo.textContent = '0 rows matched filter';
+                    } else {
+                        elements.excelRowRangeInfo.textContent = `Showing ${(startIndex + 1).toLocaleString()} to ${endIndex.toLocaleString()} of ${totalFiltered.toLocaleString()} rows`;
+                    }
+                }
+
+                if (elements.excelFilterActiveNotice) {
+                    if (currentSearchTerm.trim()) {
+                        elements.excelFilterActiveNotice.textContent = `(Filtered from ${totalDataRows.toLocaleString()} total rows)`;
+                        elements.excelFilterActiveNotice.classList.remove('hide');
+                    } else {
+                        elements.excelFilterActiveNotice.classList.add('hide');
+                    }
+                }
+
+                if (elements.excelPageIndicator) {
+                    elements.excelPageIndicator.textContent = `Page ${currentPreviewPage} of ${totalPages}`;
+                }
+
+                if (elements.excelFirstPageBtn) elements.excelFirstPageBtn.disabled = currentPreviewPage <= 1;
+                if (elements.excelPrevPageBtn) elements.excelPrevPageBtn.disabled = currentPreviewPage <= 1;
+                if (elements.excelNextPageBtn) elements.excelNextPageBtn.disabled = currentPreviewPage >= totalPages;
+                if (elements.excelLastPageBtn) elements.excelLastPageBtn.disabled = currentPreviewPage >= totalPages;
+
+                const viewport = document.getElementById('excelGridViewport');
+                if (viewport) {
+                    viewport.scrollTop = 0;
+                }
+            }
+
+            function filterExcelRows(term) {
+                currentSearchTerm = term.trim().toLowerCase();
+                const effectiveKind = currentPreviewFile ? getEffectiveSourceKind(currentPreviewFile) : SOURCE_KIND.GENERAL;
+                const isNewHire = effectiveKind === SOURCE_KIND.NEW_HIRE && currentRawRows.length >= 2;
+                const headerRowCount = isNewHire ? 2 : 1;
+                const totalDataRows = Math.max(0, currentRawRows.length - headerRowCount);
+
+                if (!currentSearchTerm) {
+                    currentFilteredIndices = [];
+                    for (let i = 0; i < totalDataRows; i++) {
+                        currentFilteredIndices.push(i);
+                    }
+                } else {
+                    currentFilteredIndices = [];
+                    for (let i = 0; i < totalDataRows; i++) {
+                        const row = currentRawRows[headerRowCount + i] || [];
+                        const matches = row.some(cell => cell && String(cell).toLowerCase().includes(currentSearchTerm));
+                        if (matches) {
+                            currentFilteredIndices.push(i);
+                        }
+                    }
+                }
+
+                currentPreviewPage = 1;
+                renderExcelTable();
+            }
+
+            function bindExcelModalEvents() {
+                if (excelEventsBound) return;
+                excelEventsBound = true;
+
+                if (elements.excelCloseBtn) {
+                    elements.excelCloseBtn.addEventListener('click', closeExcelPreviewModal);
+                }
+
+                if (elements.excelPreviewModal) {
+                    elements.excelPreviewModal.addEventListener('click', (e) => {
+                        if (e.target === elements.excelPreviewModal) {
+                            closeExcelPreviewModal();
+                        }
+                    });
+                }
+
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'Escape' && elements.excelPreviewModal && !elements.excelPreviewModal.classList.contains('hide')) {
+                        closeExcelPreviewModal();
+                    }
+                });
+
+                if (elements.excelDownloadBtn) {
+                    elements.excelDownloadBtn.addEventListener('click', () => {
+                        if (currentPreviewFile) {
+                            downloadCsvFile(currentPreviewFile.name, currentPreviewFile.content);
+                        }
+                    });
+                }
+
+                if (elements.excelSearchInput) {
+                    elements.excelSearchInput.addEventListener('input', (e) => {
+                        const val = e.target.value;
+                        if (elements.excelSearchClearBtn) {
+                            elements.excelSearchClearBtn.classList.toggle('hide', !val);
+                        }
+                        filterExcelRows(val);
+                    });
+                }
+
+                if (elements.excelSearchClearBtn) {
+                    elements.excelSearchClearBtn.addEventListener('click', () => {
+                        if (elements.excelSearchInput) {
+                            elements.excelSearchInput.value = '';
+                            elements.excelSearchClearBtn.classList.add('hide');
+                            filterExcelRows('');
+                        }
+                    });
+                }
+
+                if (elements.excelFirstPageBtn) {
+                    elements.excelFirstPageBtn.addEventListener('click', () => {
+                        currentPreviewPage = 1;
+                        renderExcelTable();
+                    });
+                }
+                if (elements.excelPrevPageBtn) {
+                    elements.excelPrevPageBtn.addEventListener('click', () => {
+                        if (currentPreviewPage > 1) {
+                            currentPreviewPage--;
+                            renderExcelTable();
+                        }
+                    });
+                }
+                if (elements.excelNextPageBtn) {
+                    elements.excelNextPageBtn.addEventListener('click', () => {
+                        currentPreviewPage++;
+                        renderExcelTable();
+                    });
+                }
+                if (elements.excelLastPageBtn) {
+                    elements.excelLastPageBtn.addEventListener('click', () => {
+                        const totalPages = Math.max(1, Math.ceil(currentFilteredIndices.length / currentPreviewPageSize));
+                        currentPreviewPage = totalPages;
+                        renderExcelTable();
+                    });
+                }
+                if (elements.excelPageSizeSelect) {
+                    elements.excelPageSizeSelect.addEventListener('change', (e) => {
+                        currentPreviewPageSize = parseInt(e.target.value, 10) || 100;
+                        currentPreviewPage = 1;
+                        renderExcelTable();
+                    });
+                }
+            }
+
         Object.assign(scope, {
+        openExcelPreviewModal,
+        closeExcelPreviewModal,
+        downloadCsvFile,
+        loadDemoDatasets,
         initializeApp,
         bindSourceManagement,
         renderFileList,
@@ -1440,6 +1964,10 @@
         mapNewHireRowToHeaders
         });
         Object.assign(App, {
+        openExcelPreviewModal,
+        closeExcelPreviewModal,
+        downloadCsvFile,
+        loadDemoDatasets,
         initializeApp,
         bindSourceManagement,
         renderFileList,

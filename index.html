@@ -128,7 +128,12 @@
 
                 <div class="sources-header-row mt-4">
                     <h3>Active Sources</h3>
-                    <button id="clearSourcesBtn" class="btn btn-outline btn-small" type="button">Clear All</button>
+                    <div class="sources-header-actions">
+                        <button id="loadDemoDataBtn" class="btn btn-outline btn-small" type="button" title="Load sanitized sample datasets into this browser">
+                            <i class="fa-solid fa-cloud-arrow-down"></i> Demo Data
+                        </button>
+                        <button id="clearSourcesBtn" class="btn btn-outline btn-small" type="button">Clear All</button>
+                    </div>
                 </div>
                 <ul id="gsheetList" class="gsheet-list">
                     <!-- GSheet items injected via JS -->
@@ -1067,6 +1072,82 @@
     <script src="assets/js/theme.js?v=20260728opt1"></script>
     <script src="assets/js/tutorial-loader.js?v=20260728tutorial1" data-tutorial-src="assets/js/tutorial.js?v=20260728tutorial1"></script>
     <script src="assets/js/app.js?v=20260728opt1"></script>
+
+    <!-- Excel-Like Dataset Viewer Modal -->
+    <div id="excelPreviewModal" class="excel-modal-backdrop hide" role="dialog" aria-modal="true" aria-labelledby="excelModalTitle">
+        <div class="excel-modal-container">
+            <!-- Excel Modal Header -->
+            <div class="excel-modal-header">
+                <div class="excel-header-left">
+                    <div class="excel-brand-badge">
+                        <i class="fa-solid fa-file-excel"></i>
+                        <span>Excel Preview</span>
+                    </div>
+                    <div class="excel-title-group">
+                        <h3 id="excelModalTitle" class="excel-file-name">Dataset.csv</h3>
+                        <div class="excel-meta-tags">
+                            <span id="excelRoleBadge" class="excel-meta-badge role">Master Tracker</span>
+                            <span id="excelDimsBadge" class="excel-meta-badge dims">0 rows × 0 cols</span>
+                            <span class="excel-meta-badge readonly"><i class="fa-solid fa-lock"></i> Read-only</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="excel-header-actions">
+                    <div class="excel-search-box">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <input type="text" id="excelSearchInput" placeholder="Filter rows across all columns..." autocomplete="off">
+                        <button type="button" id="excelSearchClearBtn" class="excel-search-clear hide" aria-label="Clear filter">&times;</button>
+                    </div>
+                    <button type="button" id="excelDownloadBtn" class="excel-download-btn" title="Download this CSV file">
+                        <i class="fa-solid fa-file-arrow-down"></i>
+                        <span>Download CSV</span>
+                    </button>
+                    <button type="button" id="excelCloseBtn" class="excel-modal-close-btn" aria-label="Close preview">&times;</button>
+                </div>
+            </div>
+
+            <!-- Excel Table Grid Viewport -->
+            <div class="excel-grid-viewport" id="excelGridViewport">
+                <table class="excel-spreadsheet-table" id="excelTable">
+                    <thead id="excelTableHead">
+                        <!-- Column Letters & Headers injected via JS -->
+                    </thead>
+                    <tbody id="excelTableBody">
+                        <!-- Rows injected via JS -->
+                    </tbody>
+                </table>
+                <div id="excelEmptyState" class="excel-empty-state hide">
+                    <i class="fa-solid fa-filter-circle-xmark"></i>
+                    <p>No rows matched your search filter.</p>
+                </div>
+            </div>
+
+            <!-- Excel Modal Footer & Pagination -->
+            <div class="excel-modal-footer">
+                <div class="excel-footer-left">
+                    <span id="excelRowRangeInfo">Showing 1 to 100 rows</span>
+                    <span id="excelFilterActiveNotice" class="excel-filter-notice hide">(Filtered)</span>
+                </div>
+                <div class="excel-pagination-controls" id="excelPaginationControls">
+                    <button type="button" id="excelFirstPageBtn" class="excel-page-btn" title="First Page">&laquo;</button>
+                    <button type="button" id="excelPrevPageBtn" class="excel-page-btn" title="Previous Page">&lsaquo; Prev</button>
+                    <span class="excel-page-indicator" id="excelPageIndicator">Page 1 of 1</span>
+                    <button type="button" id="excelNextPageBtn" class="excel-page-btn" title="Next Page">Next &rsaquo;</button>
+                    <button type="button" id="excelLastPageBtn" class="excel-page-btn" title="Last Page">&raquo;</button>
+                </div>
+                <div class="excel-footer-right">
+                    <label for="excelPageSizeSelect" class="excel-page-size-label">Rows per page:</label>
+                    <select id="excelPageSizeSelect" class="excel-page-size-select">
+                        <option value="50">50</option>
+                        <option value="100" selected>100</option>
+                        <option value="250">250</option>
+                        <option value="500">500</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </body>
 
 </html>
