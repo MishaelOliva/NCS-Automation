@@ -1,5 +1,6 @@
 # NCS ITSM Multi-Source Form Automation & Asset Reconciliation Engine
 
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-GitHub%20Pages-brightgreen.svg?style=flat&logo=github)](https://mishaeloliva.github.io/NCS-Automation/)
 [![CI](https://github.com/MishaelOliva/NCS-Automation/actions/workflows/ci.yml/badge.svg)](https://github.com/MishaelOliva/NCS-Automation/actions/workflows/ci.yml)
 [![JavaScript](https://img.shields.io/badge/JavaScript-ES6+-F7DF1E.svg?style=flat&logo=javascript&logoColor=black)](https://developer.mozilla.org/en-US/docs/Web/JavaScript)
 [![HTML5 / CSS3 Print](https://img.shields.io/badge/Engine-Pixel--Perfect%20Print%20CSS-E34F26.svg?style=flat&logo=html5&logoColor=white)]()
@@ -8,6 +9,8 @@
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
 A client-side enterprise automation utility engineered to eliminate manual data entry across multi-source IT Service Management (ITSM) asset operations. Built and deployed during a **720-hour IT Asset & Infrastructure Support practicum at NCS Group**.
+
+> 🌐 **Live Web Application:** [https://mishaeloliva.github.io/NCS-Automation/](https://mishaeloliva.github.io/NCS-Automation/)
 
 Developed by **Mishael Dioneda Oliva** ([GitHub](https://github.com/MishaelOliva) | [LinkedIn](https://linkedin.com/in/mishael-oliva)).
 
