@@ -2117,8 +2117,22 @@ test('provides Excel preview, CSV download, and demo data actions for active sou
 
     const gsheetList = app.scope.elements.gsheetList;
     const item = gsheetList.children[0]?.id === 'fragment' ? gsheetList.children[0].children[0] : gsheetList.children[0];
+    const meta = item?.children?.[0];
     const actions = item?.children?.[1];
+    assert.ok(meta, 'Source meta container should exist');
     assert.ok(actions, 'Source actions container should exist');
+
+    const cardActions = meta.children.find((c) => (c.className || '').includes('source-card-actions'));
+    assert.ok(cardActions, 'Source card action pills container should exist');
+
+    const cardPreviewPill = cardActions.children.find((c) => (c.className || '').includes('btn-source-pill-preview'));
+    const cardDownloadPill = cardActions.children.find((c) => (c.className || '').includes('btn-source-pill-download'));
+    assert.ok(cardPreviewPill, 'Preview pill button should exist on card');
+    assert.ok(cardDownloadPill, 'Download pill button should exist on card');
+    assert.match(cardPreviewPill.innerHTML, /Preview in Excel/);
+    assert.match(cardDownloadPill.innerHTML, /Download CSV/);
+    assert.match(cardPreviewPill.innerHTML, /<svg class="icon-svg"/);
+    assert.match(cardDownloadPill.innerHTML, /<svg class="icon-svg"/);
 
     const previewBtn = actions.children.find((c) => (c.className || '').includes('btn-preview'));
     const downloadBtn = actions.children.find((c) => (c.className || '').includes('btn-download'));
@@ -2127,5 +2141,15 @@ test('provides Excel preview, CSV download, and demo data actions for active sou
     assert.ok(previewBtn, 'Preview button should exist');
     assert.ok(downloadBtn, 'Download button should exist');
     assert.ok(removeBtn, 'Remove button should exist');
+    assert.match(previewBtn.innerHTML, /<svg class="icon-svg"/);
+    assert.match(downloadBtn.innerHTML, /<svg class="icon-svg"/);
+
+    // Modal lifecycle test
+    app.openExcelPreviewModal(testFile);
+    assert.equal(app.scope.elements.excelModalTitle.textContent, 'Sample.csv');
+    assert.equal(app.scope.elements.excelPreviewModal.classList.contains('hide'), false);
+
+    app.closeExcelPreviewModal();
+    assert.equal(app.scope.elements.excelPreviewModal.classList.contains('hide'), true);
 });
 

@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="assets/vendor/inter/inter.css?v=20260728opt1">
     <link rel="stylesheet" href="assets/vendor/fontawesome/css/ncs-icons.css?v=20260728opt1">
     <link rel="stylesheet" href="assets/css/base.css?v=20260728opt1">
-    <link rel="stylesheet" href="assets/css/components.css?v=20260729autofillwarning1">
+    <link rel="stylesheet" href="assets/css/components.css?v=20260924ui2">
     <link rel="stylesheet" href="assets/css/forms.css?v=20260728opt1">
     <link rel="stylesheet" href="assets/css/print.css?v=20260729accountabilitysignatures3" media="print">
     <link rel="stylesheet" href="assets/css/experience.css?v=20260728opt1">
@@ -130,7 +130,7 @@
                     <h3>Active Sources</h3>
                     <div class="sources-header-actions">
                         <button id="loadDemoDataBtn" class="btn btn-outline btn-small" type="button" title="Load sanitized sample datasets into this browser">
-                            <i class="fa-solid fa-cloud-arrow-down"></i> Demo Data
+                            <svg class="icon-svg" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="vertical-align: -2px; margin-right: 4px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>Demo Data
                         </button>
                         <button id="clearSourcesBtn" class="btn btn-outline btn-small" type="button">Clear All</button>
                     </div>
@@ -263,7 +263,7 @@
                     </button>
                 </div>
                 <div id="warningMessage" class="alert alert-warning hide hide-print" role="alert" aria-live="polite">
-                    <i class="fa-solid fa-triangle-exclamation alert-icon" aria-hidden="true"></i>
+                    <i class="fa-solid fa-circle-info alert-icon" aria-hidden="true"></i>
                     <span id="warningMessageText" class="alert-text"></span>
                     <button id="dismissWarningBtn" class="alert-dismiss" type="button" aria-label="Dismiss warning message">
                         <i class="fa-solid fa-xmark"></i>
@@ -1064,7 +1064,7 @@
     <script src="assets/js/config.js?v=20260729autofillwarning1"></script>
     <script src="assets/js/helpers.js?v=20260729autofillwarning1"></script>
     <script src="assets/js/signer-rosters.js?v=20260728opt1"></script>
-    <script src="assets/js/source-management.js?v=20260729newhireposition1"></script>
+    <script src="assets/js/source-management.js?v=20260924ui2"></script>
     <script src="assets/js/search.js?v=20260729autofillwarning1"></script>
     <script src="assets/js/form-fill.js?v=20260729remarksoptions2"></script>
     <script src="assets/js/print.js?v=20260729printfilename1"></script>
@@ -1080,26 +1080,41 @@
             <div class="excel-modal-header">
                 <div class="excel-header-left">
                     <div class="excel-brand-badge">
-                        <i class="fa-solid fa-file-excel"></i>
+                        <svg class="icon-svg" viewBox="0 0 24 24" width="16" height="16" fill="currentColor" aria-hidden="true">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zM13 3.5L18.5 9H13V3.5zM8.5 12l1.7 2.6L8.4 17.5h1.6l1-1.8 1 1.8h1.6l-1.8-2.9 1.7-2.6h-1.6l-.9 1.6-.9-1.6H8.5z"/>
+                        </svg>
                         <span>Excel Preview</span>
                     </div>
                     <div class="excel-title-group">
                         <h3 id="excelModalTitle" class="excel-file-name">Dataset.csv</h3>
                         <div class="excel-meta-tags">
                             <span id="excelRoleBadge" class="excel-meta-badge role">Master Tracker</span>
-                            <span id="excelDimsBadge" class="excel-meta-badge dims">0 rows × 0 cols</span>
-                            <span class="excel-meta-badge readonly"><i class="fa-solid fa-lock"></i> Read-only</span>
+                            <span id="excelDimsBadge" class="excel-meta-badge dims">0 rows &times; 0 cols</span>
+                            <span class="excel-meta-badge readonly">
+                                <svg class="icon-svg" viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                                    <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                                </svg>
+                                <span>Read-only</span>
+                            </span>
                         </div>
                     </div>
                 </div>
                 <div class="excel-header-actions">
                     <div class="excel-search-box">
-                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <svg class="icon-svg" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                        </svg>
                         <input type="text" id="excelSearchInput" placeholder="Filter rows across all columns..." autocomplete="off">
                         <button type="button" id="excelSearchClearBtn" class="excel-search-clear hide" aria-label="Clear filter">&times;</button>
                     </div>
                     <button type="button" id="excelDownloadBtn" class="excel-download-btn" title="Download this CSV file">
-                        <i class="fa-solid fa-file-arrow-down"></i>
+                        <svg class="icon-svg" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                            <polyline points="7 10 12 15 17 10"></polyline>
+                            <line x1="12" y1="15" x2="12" y2="3"></line>
+                        </svg>
                         <span>Download CSV</span>
                     </button>
                     <button type="button" id="excelCloseBtn" class="excel-modal-close-btn" aria-label="Close preview">&times;</button>
@@ -1117,7 +1132,11 @@
                     </tbody>
                 </table>
                 <div id="excelEmptyState" class="excel-empty-state hide">
-                    <i class="fa-solid fa-filter-circle-xmark"></i>
+                    <svg class="icon-svg" viewBox="0 0 24 24" width="36" height="36" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                        <line x1="8" y1="11" x2="14" y2="11"></line>
+                    </svg>
                     <p>No rows matched your search filter.</p>
                 </div>
             </div>
