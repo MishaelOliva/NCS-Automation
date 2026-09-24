@@ -1381,11 +1381,11 @@
     }
 
     .ncs-return-table th:nth-child(1) {
-        width: 9% !important;
+        width: 10% !important;
     }
 
     .ncs-return-table th:nth-child(2) {
-        width: 23% !important;
+        width: 22% !important;
     }
 
     .ncs-return-table th:nth-child(3) {
@@ -1461,11 +1461,11 @@
     }
 
     #template-test-device-accountability .ncs-details-table th:nth-child(1) {
-        width: 6% !important;
+        width: 4.5% !important;
     }
 
     #template-test-device-accountability .ncs-details-table th:nth-child(2) {
-        width: 10% !important;
+        width: 9.5% !important;
     }
 
     #template-test-device-accountability .ncs-details-table th:nth-child(3) {
@@ -1473,7 +1473,7 @@
     }
 
     #template-test-device-accountability .ncs-details-table th:nth-child(4) {
-        width: 32% !important;
+        width: 27% !important;
     }
 
     #template-test-device-accountability .ncs-details-table th:nth-child(5) {
@@ -1481,19 +1481,38 @@
     }
 
     #template-test-device-accountability .ncs-details-table th:nth-child(6) {
-        width: 11% !important;
+        width: 17% !important;
     }
 
     #template-test-device-accountability .ncs-details-table th:nth-child(7) {
-        width: 13% !important;
+        width: 14% !important;
     }
 
+    #template-test-device-accountability input[id^="f_tdaImei"],
+    #template-test-device-accountability input[id^="f_tdaSerial"],
+    #template-test-device-accountability input[id^="f_tdaAssetTag"],
+    #template-accountability #f_assetTag,
+    #template-accountability #f_serialNum,
+    #template-return #f_retTag,
+    #template-return #f_retSerial,
+    #template-sanitization #f_sanTag,
+    #template-sanitization #f_sanSerial {
+        font-size: 0.72rem !important;
+        letter-spacing: -0.01em !important;
+        padding: 0 1px !important;
+        min-width: 0 !important;
+        box-sizing: border-box !important;
+        text-align: center !important;
+        overflow-wrap: anywhere !important;
+    }
+
+
     #template-sanitization .ncs-sanitization-table th:nth-child(1) {
-        width: 8% !important;
+        width: 10% !important;
     }
 
     #template-sanitization .ncs-sanitization-table th:nth-child(2) {
-        width: 22% !important;
+        width: 20% !important;
     }
 
     #template-sanitization .ncs-sanitization-table th:nth-child(3) {
