@@ -2085,3 +2085,47 @@ test('keeps the tutorial current, user-paced, and easy to navigate', () => {
     assert.match(tutorialSource, /name\.includes\('natural'\) \|\| name\.includes\('neural'\)[\s\S]*?score \+= 120;/);
     assert.doesNotMatch(tutorialSource, /preferredMaleTokens|discouragedTokens/);
 });
+
+test('provides Excel preview, CSV download, and demo data actions for active sources', () => {
+    const { app } = loadApp();
+    const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+    const componentsCss = fs.readFileSync(path.join(__dirname, '..', 'assets', 'css', 'components.css'), 'utf8');
+
+    assert.equal(typeof app.openExcelPreviewModal, 'function');
+    assert.equal(typeof app.closeExcelPreviewModal, 'function');
+    assert.equal(typeof app.downloadCsvFile, 'function');
+    assert.equal(typeof app.loadDemoDatasets, 'function');
+
+    assert.match(indexHtml, /id="loadDemoDataBtn"/);
+    assert.match(indexHtml, /id="excelPreviewModal"/);
+    assert.match(indexHtml, /id="excelTable"/);
+    assert.match(indexHtml, /id="excelSearchInput"/);
+    assert.match(indexHtml, /id="excelDownloadBtn"/);
+
+    assert.match(componentsCss, /\.excel-spreadsheet-table/);
+    assert.match(componentsCss, /\.excel-modal-backdrop/);
+    assert.match(componentsCss, /\.excel-col-letter/);
+    assert.match(componentsCss, /\.excel-row-number/);
+
+    const testFile = app.normalizeStoredFile({
+        id: app.createSourceId(),
+        name: 'Sample.csv',
+        content: 'A,B,C\n1,2,3'
+    });
+    app.scope.csvFiles = [testFile];
+    app.renderFileList();
+
+    const gsheetList = app.scope.elements.gsheetList;
+    const item = gsheetList.children[0]?.id === 'fragment' ? gsheetList.children[0].children[0] : gsheetList.children[0];
+    const actions = item?.children?.[1];
+    assert.ok(actions, 'Source actions container should exist');
+
+    const previewBtn = actions.children.find((c) => (c.className || '').includes('btn-preview'));
+    const downloadBtn = actions.children.find((c) => (c.className || '').includes('btn-download'));
+    const removeBtn = actions.children.find((c) => (c.className || '').includes('btn-icon'));
+
+    assert.ok(previewBtn, 'Preview button should exist');
+    assert.ok(downloadBtn, 'Download button should exist');
+    assert.ok(removeBtn, 'Remove button should exist');
+});
+
