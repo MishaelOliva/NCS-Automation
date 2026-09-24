@@ -1458,64 +1458,18 @@ body.excel-modal-open {
     transform: translateY(-1px);
 }
 
-/* Header Quick Actions */
-.source-actions {
-    display: flex;
-    align-items: center;
-    gap: 0.25rem;
-    flex-shrink: 0;
-    background: rgba(15, 23, 42, 0.6);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 6px;
-    padding: 2px;
+.btn-source-pill-delete {
+    background: rgba(239, 68, 68, 0.14);
+    color: #fca5a5;
+    border-color: rgba(239, 68, 68, 0.35);
 }
 
-.btn-icon {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 28px;
-    height: 28px;
-    min-width: 28px;
-    padding: 0;
-    border: none;
-    border-radius: 4px;
-    background: transparent;
-    cursor: pointer;
-    transition: all 0.2s ease;
-}
-
-.btn-icon svg {
-    display: block;
-    width: 14px;
-    height: 14px;
-}
-
-.btn-icon.btn-preview {
-    color: #60a5fa;
-}
-
-.btn-icon.btn-preview:hover {
+.btn-source-pill-delete:hover {
+    background: rgba(239, 68, 68, 0.32);
     color: #ffffff;
-    background: rgba(59, 130, 246, 0.35);
-}
-
-.btn-icon.btn-download {
-    color: #4ade80;
-}
-
-.btn-icon.btn-download:hover {
-    color: #ffffff;
-    background: rgba(16, 124, 65, 0.4);
-}
-
-.btn-icon.btn-remove {
-    color: #f87171;
-}
-
-.btn-icon.btn-remove:hover {
-    color: #ffffff;
-    background: rgba(239, 68, 68, 0.35);
+    border-color: rgba(239, 68, 68, 0.7);
+    box-shadow: 0 2px 8px rgba(239, 68, 68, 0.25);
+    transform: translateY(-1px);
 }
 
 .icon-svg {
