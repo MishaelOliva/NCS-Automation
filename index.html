@@ -1096,6 +1096,13 @@
                         <input type="text" id="excelSearchInput" placeholder="Filter rows across all columns..." autocomplete="off">
                         <button type="button" id="excelSearchClearBtn" class="excel-search-clear hide" aria-label="Clear filter">&times;</button>
                     </div>
+                    <button type="button" id="excelCopyBtn" class="excel-copy-btn" title="Copy selected cells (Ctrl+C)">
+                        <svg class="icon-svg" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                        </svg>
+                        <span id="excelCopyBtnText">Copy Cells</span>
+                    </button>
                     <button type="button" id="excelDownloadBtn" class="excel-download-btn" title="Download this CSV file">
                         <svg class="icon-svg" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                             <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
@@ -1105,6 +1112,19 @@
                         <span>Download CSV</span>
                     </button>
                     <button type="button" id="excelCloseBtn" class="excel-modal-close-btn" aria-label="Close preview">&times;</button>
+                </div>
+            </div>
+
+            <!-- Excel Formula / Address Bar -->
+            <div class="excel-formula-bar" id="excelFormulaBar">
+                <div class="excel-name-box" id="excelActiveCellAddress" title="Selected cell address">A1</div>
+                <div class="excel-formula-icon" aria-hidden="true" title="Cell value">ƒx</div>
+                <div class="excel-formula-input-wrapper">
+                    <input type="text" id="excelFormulaValue" class="excel-formula-input" readonly placeholder="" title="Active cell content (Read-only)">
+                </div>
+                <div class="excel-selection-meta" id="excelSelectionMeta">
+                    <span id="excelSelectionCountBadge" class="excel-selection-count-badge">1 cell</span>
+                    <span class="excel-selection-hint">Drag or Shift+Arrows to select &bull; Ctrl+C to copy</span>
                 </div>
             </div>
 
@@ -1127,6 +1147,8 @@
                     <p>No rows matched your search filter.</p>
                 </div>
             </div>
+
+            <div id="excelToast" class="excel-toast hide" role="status" aria-live="polite"></div>
 
             <!-- Excel Modal Footer & Pagination -->
             <div class="excel-modal-footer">
@@ -1155,10 +1177,10 @@
     </div>
 
     <script src="assets/vendor/papaparse/papaparse.min.js?v=20260320a"></script>
-    <script src="assets/js/config.js?v=20260924ui3"></script>
+    <script src="assets/js/config.js?v=20260924ui4"></script>
     <script src="assets/js/helpers.js?v=20260729autofillwarning1"></script>
     <script src="assets/js/signer-rosters.js?v=20260728opt1"></script>
-    <script src="assets/js/source-management.js?v=20260924ui3"></script>
+    <script src="assets/js/source-management.js?v=20260924ui4"></script>
     <script src="assets/js/search.js?v=20260729autofillwarning1"></script>
     <script src="assets/js/form-fill.js?v=20260729remarksoptions2"></script>
     <script src="assets/js/print.js?v=20260729printfilename1"></script>

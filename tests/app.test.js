@@ -2145,3 +2145,86 @@ test('provides Excel preview, CSV download, and demo data actions for active sou
     assert.equal(app.scope.elements.excelPreviewModal.classList.contains('hide'), true);
 });
 
+test('supports Excel cell selection, TSV clipboard copy, and strictly read-only navigation', async () => {
+    const { app } = loadApp();
+    const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+    const componentsCss = fs.readFileSync(path.join(__dirname, '..', 'assets', 'css', 'components.css'), 'utf8');
+
+    // UI elements in HTML
+    assert.match(indexHtml, /id="excelCopyBtn"/);
+    assert.match(indexHtml, /id="excelCopyBtnText"/);
+    assert.match(indexHtml, /id="excelFormulaBar"/);
+    assert.match(indexHtml, /id="excelActiveCellAddress"/);
+    assert.match(indexHtml, /id="excelFormulaValue"/);
+    assert.match(indexHtml, /id="excelToast"/);
+
+    // CSS styling rules
+    assert.match(componentsCss, /\.excel-copy-btn/);
+    assert.match(componentsCss, /\.excel-formula-bar/);
+    assert.match(componentsCss, /\.excel-cell-selected/);
+    assert.match(componentsCss, /\.excel-header-selected/);
+    assert.match(componentsCss, /\.excel-cell-copied/);
+    assert.match(componentsCss, /\.excel-toast/);
+
+    // API methods
+    assert.equal(typeof app.copySelectedExcelCells, 'function');
+    assert.equal(typeof app.getSelectedExcelCellsAsTSV, 'function');
+    assert.equal(typeof app.updateExcelSelectionUI, 'function');
+
+    const multiRowFile = app.normalizeStoredFile({
+        id: app.createSourceId(),
+        name: 'Staff.csv',
+        content: 'Name,Role,Status\nAlice,Developer,Active\nBob,Designer,Away'
+    });
+
+    app.openExcelPreviewModal(multiRowFile);
+
+    // Initial selection defaults to cell (0, 0)
+    assert.ok(app.scope.excelSelection);
+    assert.equal(app.scope.excelSelection.startRow, 0);
+    assert.equal(app.scope.excelSelection.startCol, 0);
+    assert.equal(app.getSelectedExcelCellsAsTSV(), 'Alice');
+    assert.equal(app.scope.elements.excelActiveCellAddress.textContent, 'A2');
+    assert.equal(app.scope.elements.excelFormulaValue.value, 'Alice');
+    assert.equal(app.scope.elements.excelSelectionCountBadge.textContent, '1 cell');
+
+    // Selection range across 2 rows and 3 columns
+    app.scope.excelSelection = { startRow: 0, startCol: 0, endRow: 1, endCol: 2 };
+    app.updateExcelSelectionUI();
+    assert.equal(app.getSelectedExcelCellsAsTSV(), 'Alice\tDeveloper\tActive\r\nBob\tDesigner\tAway');
+    assert.equal(app.scope.elements.excelActiveCellAddress.textContent, 'A2:C3');
+    assert.match(app.scope.elements.excelSelectionCountBadge.textContent, /6 cells/);
+
+    // Clipboard copy mock
+    let capturedText = null;
+    app.scope.writeTextToClipboard = async (text) => {
+        capturedText = text;
+        return true;
+    };
+
+    const copyResult = await app.copySelectedExcelCells();
+    assert.equal(copyResult, true);
+    assert.equal(capturedText, 'Alice\tDeveloper\tActive\r\nBob\tDesigner\tAway');
+
+    // Strict read-only verification: formula input has readonly attribute
+    assert.match(indexHtml, /<input[^>]+id="excelFormulaValue"[^>]+readonly/);
+
+    app.closeExcelPreviewModal();
+
+    // Verify TSV escaping for quotes, tabs, and newlines
+    const specialFile = app.normalizeStoredFile({
+        id: app.createSourceId(),
+        name: 'Special.csv',
+        content: 'Item\n"Tab\there"\n"Has ""quotes"""'
+    });
+    app.openExcelPreviewModal(specialFile);
+    app.scope.excelSelection = { startRow: 0, startCol: 0, endRow: 1, endCol: 0 };
+    app.updateExcelSelectionUI();
+    const tsvOutput = app.getSelectedExcelCellsAsTSV();
+    assert.match(tsvOutput, /"Tab\there"/);
+    assert.match(tsvOutput, /"Has ""quotes"""/);
+
+    app.closeExcelPreviewModal();
+});
+
+
