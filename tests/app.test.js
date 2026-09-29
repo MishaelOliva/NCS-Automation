@@ -2011,28 +2011,64 @@ test('keeps dual lookup fields wide by placing desktop actions on their own row'
     assert.doesNotMatch(indexHtml, /assets\/css\/style\.css|fontawesome\/css\/all\.min\.css|\ssrc="assets\/js\/tutorial\.js/);
 });
 
-test('uses the supplied NCS logo with a themed gradient backdrop', () => {
+test('uses the neutral project brand mark with a themed gradient backdrop', () => {
     const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
     const experienceCss = fs.readFileSync(path.join(__dirname, '..', 'assets', 'css', 'experience.css'), 'utf8');
-    const sidebarLogoPath = path.join(__dirname, '..', 'assets', 'img', 'ncs-logo-sidebar.png');
+    const brandMarkPath = path.join(__dirname, '..', 'assets', 'img', 'brand-mark.png');
 
-    assert.equal(fs.existsSync(sidebarLogoPath), false);
-    const optimizedLogoPath = path.join(__dirname, '..', 'assets', 'img', 'ncs-logo-optimized.png');
-    const originalLogoPath = path.join(__dirname, '..', 'assets', 'img', 'ncs-logo.png');
-
-    assert.match(indexHtml, /<div class="panel-brand-mark"[^>]*>[\s\S]*?assets\/img\/ncs-logo-optimized\.png/);
-    assert.ok(fs.statSync(optimizedLogoPath).size < fs.statSync(originalLogoPath).size);
+    assert.ok(fs.existsSync(brandMarkPath), 'brand-mark.png must exist');
+    assert.ok(fs.statSync(brandMarkPath).size > 0);
+    assert.match(indexHtml, /<div class="panel-brand-mark"[^>]*>[\s\S]*?assets\/img\/brand-mark\.png/);
     assert.match(experienceCss, /\.panel-brand-mark\s*\{[\s\S]*?background:\s*linear-gradient\(/);
     assert.match(experienceCss, /\.panel-brand-mark img\s*\{[\s\S]*?filter:\s*none;[\s\S]*?visibility:\s*visible;/);
     assert.doesNotMatch(experienceCss, /\.panel-brand-mark::before/);
 });
 
-test('uses the NCS accountability palette in the form comfort preview', () => {
+test('ships no third-party employer branding assets', () => {
+    const imgDir = path.join(__dirname, '..', 'assets', 'img');
+    const shipped = fs.readdirSync(imgDir);
+
+    assert.deepEqual(shipped, ['brand-mark.png']);
+});
+
+test('demo datasets are synthetic and free of employer or personal identifiers', () => {
+    const demoDir = path.join(__dirname, '..', 'assets', 'demo-data');
+    const expected = [
+        'demo-asset-master-tracker.csv',
+        'demo-itsm-task-assignments.csv',
+        'demo-new-hire-attendance.csv',
+        'demo-test-device-pool.csv'
+    ];
+
+    assert.ok(fs.existsSync(path.join(demoDir, 'README.md')), 'demo-data must document its own provenance');
+
+    const corpus = fs.readdirSync(demoDir)
+        .filter((name) => name.endsWith('.csv'))
+        .map((name) => fs.readFileSync(path.join(demoDir, name), 'utf8'))
+        .join('\n');
+
+    assert.equal(fs.readdirSync(demoDir).filter((n) => n.endsWith('.csv')).length, expected.length);
+
+    // Employer names, customer names, and real corporate mail domains.
+    for (const forbidden of ['yondu', 'Yondu', 'NCS', '@gmail.com', 'Transportify', 'LBC Delivery', 'HRBP']) {
+        assert.equal(corpus.includes(forbidden), false, `demo data must not contain "${forbidden}"`);
+    }
+
+    // Synthetic identifiers must use the reserved conventions documented in the README.
+    assert.equal(/[A-Za-z0-9._%+-]+@(?!example\.(com|org))[A-Za-z0-9.-]+/.test(corpus), false,
+        'every demo email must use a reserved example domain');
+    assert.equal(/\b(?!02:00:00)([0-9A-F]{2}:){5}[0-9A-F]{2}\b/i.test(corpus), false,
+        'every demo MAC must use the locally administered 02:00:00 prefix');
+    assert.match(corpus, /SYN-/);
+    assert.match(corpus, /EMP-\d{4}/);
+});
+
+test('uses the accountability palette in the form comfort preview', () => {
     const settingsHtml = fs.readFileSync(path.join(__dirname, '..', 'settings.html'), 'utf8');
     const settingsCss = fs.readFileSync(path.join(__dirname, '..', 'assets', 'css', 'settings.css'), 'utf8');
 
-    assert.match(settingsHtml, /Live NCS Form Preview/);
-    assert.match(settingsHtml, /form-comfort-preview-brand[\s\S]*?assets\/img\/ncs-logo-optimized\.png/);
+    assert.match(settingsHtml, /Live Form Preview/);
+    assert.match(settingsHtml, /form-comfort-preview-brand[\s\S]*?assets\/img\/brand-mark\.png/);
     assert.match(settingsHtml, /form-comfort-preview-bar">Asset Accountability Form/);
     assert.match(settingsCss, /\.form-comfort-preview-paper\s*\{[\s\S]*?--ncs-preview-navy:\s*#172d67;[\s\S]*?--ncs-preview-sky:\s*#53a6dc;/);
     assert.match(settingsCss, /\.form-comfort-preview-detail-head span\s*\{[\s\S]*?background:\s*var\(--ncs-preview-navy\);[\s\S]*?color:\s*#ffffff;/);

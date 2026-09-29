@@ -1450,10 +1450,10 @@
 
                 try {
                     const demoFilePaths = [
-                        'assets/demo-data/ITSM Asset Master Tracker - Sanitized Masterdata (FAR August).csv',
-                        'assets/demo-data/ITSM - Task Assignment - Original File - RELEASING_UPDATED.csv',
-                        'assets/demo-data/Newly Hired Attendance - IT - April 2026.csv',
-                        'assets/demo-data/TEST DEVICE 2025 - MONITORING.csv'
+                        'assets/demo-data/demo-asset-master-tracker.csv',
+                        'assets/demo-data/demo-itsm-task-assignments.csv',
+                        'assets/demo-data/demo-new-hire-attendance.csv',
+                        'assets/demo-data/demo-test-device-pool.csv'
                     ];
 
                     const nextFiles = csvFiles.map((file) => normalizeStoredFile(file));

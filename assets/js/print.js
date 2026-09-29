@@ -991,7 +991,7 @@
                 if (type === 'sanitization') {
                     page.innerHTML = `
                         <div class="form-top-row">
-                            <img src="assets/img/ncs-logo-optimized.png" alt="NCS Logo" class="yondu-logo-img ncs-logo-img" width="720" height="259">
+                            <img src="assets/img/brand-mark.png" alt="NCS Logo" class="yondu-logo-img ncs-logo-img" width="720" height="259">
                         </div>
                         <div class="form-title-bar ncs-form-title mt-spacing">IT ASSET SANITATION FORM</div>
                         ${pageBadge}
@@ -1038,7 +1038,7 @@
 
                 page.innerHTML = `
                     <div class="form-top-row">
-                        <img src="assets/img/ncs-logo-optimized.png" alt="NCS Logo" class="yondu-logo-img ncs-logo-img" width="720" height="259">
+                        <img src="assets/img/brand-mark.png" alt="NCS Logo" class="yondu-logo-img ncs-logo-img" width="720" height="259">
                     </div>
                     <div class="form-title-bar ncs-form-title mt-spacing">${escapeHtml(snapshot.title)}</div>
                     ${pageBadge}
@@ -1387,7 +1387,7 @@
 
                 page.innerHTML = `
                     <div class="form-top-row">
-                        <img src="assets/img/ncs-logo-optimized.png" alt="NCS Logo" class="yondu-logo-img ncs-logo-img" width="720" height="259">
+                        <img src="assets/img/brand-mark.png" alt="NCS Logo" class="yondu-logo-img ncs-logo-img" width="720" height="259">
                         <div class="control-number-container ncs-control-number">
                             <div class="cn-label-box">Control Number</div>
                             <div class="cn-value-box">${escapeHtml(snapshot.controlNumber)}</div>
