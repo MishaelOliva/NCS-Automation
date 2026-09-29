@@ -50,11 +50,11 @@
             },
             infosec: {
                 label: 'InfoSec names',
-                defaultName: 'GANDIA, STEFFI MAGNO',
-                seedNames: ['GANDIA, STEFFI MAGNO']
+                defaultName: 'SAMPLE, JORDAN LEE',
+                seedNames: ['SAMPLE, JORDAN LEE']
             }
         },
-        DEFAULT_INFOSEC_NAME: 'GANDIA, STEFFI MAGNO',
+        DEFAULT_INFOSEC_NAME: 'SAMPLE, JORDAN LEE',
         DEFAULT_RETURN_STATUS: 'RETURNED/RESIGN',
         DEFAULT_DOCUMENT_TITLE: document.title,
         ACCOUNTABILITY_PRINT_MODES: {

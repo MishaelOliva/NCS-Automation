@@ -15,7 +15,7 @@ const cases = [
         pages: 1,
         templates: ['template-accountability'],
         fields: {
-            '#f_empName': 'DELA CRUZ, ALEXANDER SANTOS',
+            '#f_empName': 'SAMPLE, ALEX ROSE',
             '#f_position': 'Senior Business Systems Analyst',
             '#f_empId': 'NCS-012345',
             '#f_costCenter': 'IT-OPS',
@@ -28,12 +28,12 @@ const cases = [
         pages: 1,
         templates: ['template-test-device-accountability'],
         fields: {
-            '#f_tdaEmpName': 'DELA CRUZ, ALEXANDER SANTOS',
+            '#f_tdaEmpName': 'SAMPLE, ALEX ROSE',
             '#f_tdaBusinessUnit': 'Technology Operations',
             '#f_tdaEmpId': 'NCS-012345',
             '#f_tdaEmploymentStatus': 'ACTIVE',
             '#f_tdaPosition': 'Senior Business Systems Analyst',
-            '#f_tdaSupervisor': 'SANTOS, MARIA',
+            '#f_tdaSupervisor': 'SAMPLE, CASEY LEE',
             '#f_tdaAssetTag': 'TD-001234',
             '#f_tdaModel': 'Apple iPhone 15 Pro Max 256 GB',
             '#f_tdaSerial': 'SN1234567890',
@@ -249,15 +249,15 @@ function pairedWorkflowFields(deviceType) {
         ? 'Lenovo ThinkPad T14 Gen 4 with charger and carrying bag'
         : 'Apple iPhone 15 Pro Max 256 GB with charging cable';
     return {
-        '#f_retName': 'DELA CRUZ, ALEXANDER SANTOS',
-        '#f_retEmail': 'alexander.delacruz@example.com',
+        '#f_retName': 'SAMPLE, ALEX ROSE',
+        '#f_retEmail': 'alex.rose@example.com',
         '#f_retEmpNo': 'NCS-012345',
         '#f_retBU': 'Technology Operations',
         '#f_retTag': deviceType === 'Laptop' ? 'LT-001234' : 'TD-001234',
         '#f_retDesc': description,
         '#f_retSerial': 'SN1234567890',
-        '#f_sanName': 'DELA CRUZ, ALEXANDER SANTOS',
-        '#f_sanEmail': 'alexander.delacruz@example.com',
+        '#f_sanName': 'SAMPLE, ALEX ROSE',
+        '#f_sanEmail': 'alex.rose@example.com',
         '#f_sanEmpNo': 'NCS-012345',
         '#f_sanBU': 'Technology Operations',
         '#f_sanTag': deviceType === 'Laptop' ? 'LT-001234' : 'TD-001234',

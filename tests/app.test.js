@@ -2031,6 +2031,44 @@ test('ships no third-party employer branding assets', () => {
     assert.deepEqual(shipped, ['brand-mark.png']);
 });
 
+test('ships no real person names in shipped defaults or rosters', () => {
+    const root = path.join(__dirname, '..');
+    const tracked = [
+        'index.html',
+        'settings.html',
+        'assets/js/config.js',
+        'assets/js/print.js',
+        'assets/js/signer-rosters.js',
+        'tests/print-smoke.mjs'
+    ];
+    const allowed = new Set([
+        'SAMPLE, ALEX ROSE',
+        'SAMPLE, CASEY LEE',
+        'SAMPLE, JORDAN LEE',
+        'TESTER, PAT SAM',
+        'PLACEHOLDER, RILEY JUNE',
+        'SURNAME, FULL NAME',
+        'DOE, JANE MARIE',
+        'PRINT LAYOUT QA USER'
+    ]);
+    // A whole string literal in "SURNAME, GIVEN [MIDDLE]" form. Anchoring the
+    // match to the entire literal keeps this from firing on code identifiers,
+    // product descriptions, or prose that merely contains a comma.
+    const personName = /^[A-Z][A-Z'’-]+(?: [A-Z][A-Z'’-]+)?, [A-Z][A-Z'’-]+(?: [A-Z][A-Z'’-]+)*$/;
+    const stringLiteral = /'([^'\n]*)'|"([^"\n]*)"/g;
+
+    for (const relative of tracked) {
+        const text = fs.readFileSync(path.join(root, relative), 'utf8');
+        for (const match of text.matchAll(stringLiteral)) {
+            const value = match[1] !== undefined ? match[1] : match[2];
+            if (!personName.test(value) || allowed.has(value)) {
+                continue;
+            }
+            assert.fail(`${relative} contains an unrecognised person name: "${value}"`);
+        }
+    }
+});
+
 test('demo datasets are synthetic and free of employer or personal identifiers', () => {
     const demoDir = path.join(__dirname, '..', 'assets', 'demo-data');
     const expected = [
