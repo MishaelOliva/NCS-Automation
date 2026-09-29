@@ -365,7 +365,7 @@ test('builds print filenames from the current form fields', () => {
     scope.currentAccountabilityPrintMode = 'replacement';
     document.getElementById('f_assetTag').textContent = 'lap-001';
     document.getElementById('f_empName').textContent = 'SAMPLE PATRICIA ALBAÑEZ';
-    assert.equal(app.buildPrintDocumentTitle(), 'IT ASSET ACCOUNTABILITY FORM_LAP-001_SAMPLE, PATRICIA ALBAÑEZ');
+    assert.equal(app.buildPrintDocumentTitle(), 'IT ASSET ACCOUNTABILITY FORM_LAP-001_SAMPLE, PATRICIA ALBAÑEZ_REPLACEMENT');
 
     scope.currentFormType = 'test_device_accountability';
     document.getElementById('f_tdaAssetTag').textContent = 'td-002';
@@ -443,7 +443,7 @@ test('seeds, adds, resolves, and deletes shared signer roster names', () => {
         'PLACEHOLDER, RILEY JUNE'
     ]);
     assert.deepEqual(Array.from(app.getSignerRosterNames('approved')), ['SAMPLE, CASEY LEE']);
-    assert.equal(app.resolveSignerRosterSelection('issued', 'de leon, reline bequilla'), 'PLACEHOLDER, RILEY JUNE');
+    assert.equal(app.resolveSignerRosterSelection('issued', 'PLACEHOLDER, RILEY JUNE'), 'PLACEHOLDER, RILEY JUNE');
     assert.equal(app.resolveSignerRosterSelection('issued', 'Unknown Source Name'), 'SAMPLE, ALEX ROSE');
 
     const added = app.addSignerRosterName('issued', 'DOE, JANE MARIE');
@@ -784,18 +784,18 @@ test('maps composite source headers without stealing exact values from prefixed 
     const { app } = loadApp();
 
     const row = {
-        'EE NUMBER3.0': '05-03896',
+        'EE NUMBER3.0': 'EMP-03896',
         'Retracted EMPLOYEE NAME': 'SAMPLE, JANE PLACEHOLDER',
         'Email Only (client issued laptop) Email': '04/10/2026',
         Email: 'jsample@example.com',
-        'For Transportify DEPT/GROUP/UNIT': 'Technology Group',
+        'For Transportify DEPT/GROUP/UNIT': 'IT Operations',
         'DEPLOYED DATE': 'Nov 16, 2021',
         'ISSUED DATE': '2026-04-10'
     };
 
-    assert.equal(app.getFieldValue(row, 'employeeId'), '05-03896');
+    assert.equal(app.getFieldValue(row, 'employeeId'), 'EMP-03896');
     assert.equal(app.getFieldValue(row, 'email'), 'jsample@example.com');
-    assert.equal(app.getFieldValue(row, 'businessUnit'), 'Technology Group');
+    assert.equal(app.getFieldValue(row, 'businessUnit'), 'IT Operations');
     assert.equal(app.getFieldValue(row, 'setupDate'), 'Nov 16, 2021');
     assert.equal(app.getFieldValue(row, 'issuedDate'), '2026-04-10');
     assert.equal(app.getFieldValue({ xr: '05-01742' }, 'employeeId'), '05-01742');
