@@ -4,7 +4,7 @@ In-browser IT asset reconciliation and handover form generator with client-side 
 
 [![Live Demo](https://img.shields.io/badge/Live%20Demo-GitHub%20Pages-brightgreen.svg)](https://mishaeloliva.github.io/NCS-Automation/)
 [![CI](https://github.com/MishaelOliva/NCS-Automation/actions/workflows/ci.yml/badge.svg)](https://github.com/MishaelOliva/NCS-Automation/actions/workflows/ci.yml)
-[![Tests](https://img.shields.io/badge/Tests-78%20Passing-success.svg)](https://github.com/MishaelOliva/NCS-Automation/actions)
+[![Tests](https://img.shields.io/badge/Tests-79%20Passing-success.svg)](https://github.com/MishaelOliva/NCS-Automation/actions)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
 ## What it does
@@ -129,7 +129,7 @@ The test suite runs using Node.js built-in test runner (`node --test`) and valid
 npm test
 ```
 
-78 tests run in approximately 3s with zero external test framework dependencies.
+79 tests run in approximately 3s with zero external test framework dependencies.
 
 ## Known limitations
 
