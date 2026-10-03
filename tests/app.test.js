@@ -827,7 +827,7 @@ test('uses the canonical duplicate TD tag and preserves it for serial or IMEI se
         TAGGING_3: 'TD0013',
         TAGGING_2: 'TD-00016',
         'EE No.': '05-03722',
-        ASSIGNEE: 'LANDICHO, ERICKA RIZZELLE GATDULA',
+        ASSIGNEE: 'SAMPLE, ERICKA RIZZELLE',
         'MOBILE UNIT': 'HUAWEI Y7A',
         'Serial No.': '0151409S34106030',
         'IMEI NO': '860219054903997'
@@ -1130,7 +1130,7 @@ test('keeps the searched TD asset tag when combined sources disagree', () => {
 
     const employeeRow = {
         'Employee ID': '05-03303',
-        'Employee Name': 'DIESTA, SHAIRA SALVIO',
+        'Employee Name': 'SAMPLE, SHAIRA SALVIO',
         'Employee Position': 'Business Analyst',
         'Business Unit': 'Technology Group'
     };
@@ -1198,7 +1198,7 @@ test('renders multiple test-device asset tags in the right-side cell', () => {
 
     const employeeRow = {
         'Employee ID': '05-03544',
-        'Employee Name': 'REYES, MARC ALVIN CANAPI',
+        'Employee Name': 'SAMPLE, MARC ALVIN',
         'Employee Position': 'Business Analyst',
         'Business Unit': 'Technology Group'
     };
@@ -1242,9 +1242,9 @@ test('renders multiple test-device asset tags in the right-side cell', () => {
     assert.equal(document.getElementById('f_tdaModel').value, 'OPPO A92');
     assert.equal(document.getElementById('f_tdaModel_2').value, 'Samsung Galaxy A11');
     assert.equal(document.getElementById('f_tdaSerial_2').value, 'R9RR701478E');
-    assert.equal(document.getElementById('f_tdaEmployeeSignature').value, 'REYES, MARC ALVIN CANAPI');
-    assert.equal(document.getElementById('f_tdaEmployeeSignature_2').value, 'REYES, MARC ALVIN CANAPI');
-    assert.equal(document.getElementById('f_tdaEmployeePrintName').value, 'REYES, MARC ALVIN CANAPI');
+    assert.equal(document.getElementById('f_tdaEmployeeSignature').value, 'SAMPLE, MARC ALVIN');
+    assert.equal(document.getElementById('f_tdaEmployeeSignature_2').value, 'SAMPLE, MARC ALVIN');
+    assert.equal(document.getElementById('f_tdaEmployeePrintName').value, 'SAMPLE, MARC ALVIN');
     assert.equal(document.getElementById('f_tdaCostCenter').value, 'Business Analyst');
     assert.equal(document.getElementById('f_tdaDetailsBody').children.length, 3);
 });
@@ -1257,7 +1257,7 @@ test('renders a third test-device asset tag in the same right-side stack', () =>
 
     const employeeRow = {
         'Employee ID': '05-03544',
-        'Employee Name': 'REYES, MARC ALVIN CANAPI',
+        'Employee Name': 'SAMPLE, MARC ALVIN',
         'Employee Position': 'Business Analyst',
         'Business Unit': 'Technology Group'
     };

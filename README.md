@@ -49,9 +49,9 @@ Because asset serials and employee rosters contain sensitive internal data, all 
 
 ## Screenshots
 
-| IT Asset Accountability Form | Asset Return & Sanitation Form |
+| Application Workspace | IT Asset Accountability Form |
 | :---: | :---: |
-| ![Accountability Form](docs/screenshots/current-accountability-print.png) | ![Return Form](docs/screenshots/current-return-print.png) |
+| ![Application Workspace](docs/screenshots/app-ui.png) | ![Accountability Form](docs/screenshots/accountability-form.png) |
 ## Data provenance
 
 **No real data is in this repository.**
